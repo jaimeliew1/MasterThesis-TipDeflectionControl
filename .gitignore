@@ -1,2 +1,7 @@
 Figures/
 JaimesThesisModule/__pycache__/
+.spyproject/
+Modelling/__pycache__/
+Controllers/__pycache__/
+Configuration/__pycache__/
+Postprocessing/__pycache__/

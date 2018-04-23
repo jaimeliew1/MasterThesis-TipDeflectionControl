@@ -7,7 +7,7 @@ Created on Mon Apr 23 11:00:36 2018
 from scipy import interpolate
 import numpy as np
 
-directory = 'Modelling/Data/'
+directory = '../Modelling/Data/'
 
 
 def Response(wsp, rad=False):
@@ -30,6 +30,4 @@ def Response(wsp, rad=False):
 if __name__ == '__main__':
     directory =  'Data/'
 
-    Y = Response(4)
-    f = np.linspace(0.01, 1, 1000)
-    plt.plot(f, Y(f))
+

@@ -77,8 +77,8 @@ def saveResponse(f, Y, wsp):
 
 if __name__ is '__main__':
     # Load HAWC2 result data
-    #dlc_noipc = PostProc.DLC('dlc11_0')
-    #dlc_noipc.analysis(mode='fullload')
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis(mode='fullload')
 
     WSP = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26]
 
