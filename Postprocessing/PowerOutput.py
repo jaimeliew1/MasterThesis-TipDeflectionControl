@@ -11,9 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from JaimesThesisModule import PostProc
-import Statistics
 
-def run(dlc, ref_dlc=None, save=None):
+
+def run(dlc, ref_dlc, c, SAVE=None):
     #%% Violin plot
 
     key = 'Pelec'; unit = 'W'
@@ -27,8 +27,7 @@ def run(dlc, ref_dlc=None, save=None):
             y = np.append(y, seed.Data[key].values)
             hue = np.append(hue, ['noipc']*N)
 
-    c = 'ipc04'
-    #c = 'ipc4p'
+
     sims = dlc(controller=c, yaw=0, Kp=-1)
     for sim in sims:
         for seed in sim:
@@ -47,9 +46,9 @@ def run(dlc, ref_dlc=None, save=None):
 
 
     #Statistics.run(dlc, ref_dlc, save=save, key='Pelec', unit='W')
-    if save:
-        plt.savefig('../Figures/Power/Violin_{}_{}.png'.format(key, c), dpi=200)
-    plt.show()
+    if SAVE:
+        plt.savefig('../Figures/{}/{}_Power.png'.format(c, c), dpi=200)
+    plt.show(); print()
 
 
 
@@ -64,4 +63,4 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, save=True)
+    run(dlc, dlc_noipc, 'ipc04', SAVE=True)

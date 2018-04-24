@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from scipy import signal, interpolate
 from JaimesThesisModule import Analysis, PostProc, ControlDesign
 
-from Controllers import IPC04, IPC05
+
 from Modelling import BladeModel, OLResponse
 
 
@@ -50,9 +50,41 @@ def magplotSetup(xlim = [0.01, 1.5], F1p=None):
 
     return fig, axes
 
+def run(dlc, dlc_noipc, c, C, SAVE=False):
+
+
+    WSP = [6, 12, 18, 24]
+
+    for wsp in WSP:
+        # Load transfer functions
+        P = BladeModel.Blade(wsp)
+        Yol = OLResponse.Response(wsp)
+        # Calculate predicted output spectrum
+        system = ControlDesign.Turbine(P, C)
+        w, H = signal.freqresp(system.S)
+        f = w/(2*np.pi)
+        Ycl_pred = abs(H)*Yol(f)
+        # Load close loop output spectrum
+        Sim = dlc(yaw=0, wsp=wsp, controller=c, Kp = -1)[0]
+        Ycl = Spectrum(Sim)
+
+        fig, ax = magplotSetup(F1p=0.16)
+        ax.set_ylabel('Magnitude [m]')
+        ax.plot(f, Yol(f), label='$Y_{OL}$')
+        ax.plot(f, Ycl_pred, '--k', label ='$Y_{CL}$ (predicted)')
+        ax.plot(f, Ycl(f), 'r', label ='$Y_{CL}$ (actual)')
+        ax.set_xlim(f.min(), 1.5)
+        ax.set_title('wsp = {}m/s'.format(wsp))
+        ax.legend()
+
+        if SAVE:
+            plt.savefig('../Figures/{}/{}_TipDeflection_Spectrum_{}.png'.format(c, c, wsp), dpi=200)
+        plt.show(); print()
+
+
+
 if __name__ is '__main__':
     if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
-
         mode = 'fullload'
         dlc_noipc = PostProc.DLC('dlc11_0')
         dlc_noipc.analysis(mode=mode)
@@ -60,30 +92,8 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    wsp = 18
+    from Controllers import IPC04
+    c = 'ipc04'
+    run(dlc, dlc_noipc, c, IPC04.make(), SAVE=False)
 
-    # Load transfer functions
-    C = IPC04.make()
-    P = BladeModel.Blade(wsp)
-    Yol = OLResponse.Response(wsp)
-    # Calculate predicted output spectrum
-    system = ControlDesign.Turbine(P, C)
-    w, H = signal.freqresp(system.S)
-    f = w/(2*np.pi)
-    Ycl_pred = abs(H)*Yol(f)
-    # Load close loop output spectrum
-    Sim = dlc(yaw=0, wsp=wsp, controller='ipc04', Kp = -1)[0]
-    Ycl = Spectrum(Sim)
 
-    fig, ax = magplotSetup(F1p=0.16)
-    ax.set_ylabel('Magnitude [m]')
-    ax.plot(f, Yol(f), label='$Y_{OL}$')
-    ax.plot(f, Ycl_pred, '--k', label ='$Y_{CL}$ (predicted)')
-    ax.plot(f, Ycl(f), 'r', label ='$Y_{CL}$ (actual)')
-    ax.set_xlim(f.min(), 1.5)
-    ax.set_title('wsp = {}m/s'.format(wsp))
-    ax.legend()
-
-    if SAVE:
-        plt.savefig('../Figures/CLResponse/TipDeflection_Spectrum_{}.png'.format(wsp), dpi=200)
-    plt.show();print()

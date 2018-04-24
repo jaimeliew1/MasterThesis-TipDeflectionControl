@@ -9,43 +9,9 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 
-def run(dlc, ref_dlc=None, save=None):
 
-    # Pitch angle vs time
-    wsp, k = 26, -1
-    controllers = dlc.unique(['controller'])
-    controllers = ['ipc04']
-    plt.figure()
-    plt.title('wsp: {}, Kp: {:2.0f}mrad/m'.format(wsp, -k*1000))
-    ref_sim = ref_dlc(wsp=wsp, yaw=0)
-    plt.plot(ref_sim[0].seeds[0].Data.t, ref_sim[0].seeds[0].Data.pitch1, label='no control')
-    for c in controllers:
-        sims = dlc(wsp = wsp, yaw=0, controller=c, Kp=k)
-        plt.plot(sims[0].seeds[0].Data.t, sims[0].seeds[0].Data.pitch1, ls='--', label=c[0])
 
-    plt.legend()
-    plt.xlim([200,300])
-
-    plt.xlabel('Time [s]')
-    plt.ylabel('Blade 1 pitch angle [deg]')
-
-    #Pitch rate vs time
-    plt.figure()
-    ref_sim = ref_dlc(wsp=wsp, yaw=0)
-    plt.plot(ref_sim[0].seeds[0].Data.t, ref_sim[0].seeds[0].Data.pitchrate1, label='no control')
-    for c in controllers:
-        sims = dlc(wsp = wsp, yaw=0, controller=c, Kp=k)
-        plt.plot(sims[0].seeds[0].Data.t, sims[0].seeds[0].Data.pitchrate1, ls='--', label=c[0])
-
-    plt.axhline(y=10, c='k', lw=1, ls='--')
-    plt.axhline(y=-10, c='k', lw=1, ls='--')
-    plt.legend()
-
-    plt.xlabel('Time [s]')
-    plt.ylabel('Blade 1 pitch rate [deg/s]')
-    plt.show()
-
-def plot_angle_timeseries(dlc, dlc_noipc, wsp, c, save=False):
+def plot_angle_timeseries(dlc, dlc_noipc, c, wsp=26, save=False):
     # get relevant simuation data
     sims = dlc(wsp=wsp, yaw=0, controller=c)
     ref_sim = dlc_noipc(wsp=wsp, yaw=0)
@@ -61,17 +27,18 @@ def plot_angle_timeseries(dlc, dlc_noipc, wsp, c, save=False):
 
     plt.legend()
     if save:
-        plt.savefig('../Figures/Pitchrate/pitchangle_{}_{}.png'.format(c, wsp), dpi=200)
+        plt.savefig('../Figures/{}/{}_pitchangle_{}.png'.format(c, c, wsp), dpi=200)
+    plt.show(); print()
 
 
 
-def plot_rate_timeseries(dlc, dlc_noipc, wsp, c, save=False):
+def plot_rate_timeseries(dlc, dlc_noipc, c, wsp=26, save=False):
     # get relevant simuation data
     sims = dlc(wsp=wsp, yaw=0, controller=c)
     ref_sim = dlc_noipc(wsp=wsp, yaw=0)
     plt.figure()
     plt.xlabel('Time [s]')
-    plt.ylabel('Blade rate angle [deg]')
+    plt.ylabel('Blade pitch rate [deg]')
     plt.xlim([200,250])
 
     plt.plot(ref_sim[0].seeds[0].Data.t, ref_sim[0].seeds[0].Data.pitchrate1, label='no control')
@@ -81,10 +48,11 @@ def plot_rate_timeseries(dlc, dlc_noipc, wsp, c, save=False):
 
     plt.legend()
     if save:
-        plt.savefig('../Figures/Pitchrate/pitchrate_{}_{}.png'.format(c, wsp), dpi=200)
+        plt.savefig('../Figures/{}/{}_pitchrate_{}.png'.format(c, c, wsp), dpi=200)
+    plt.show(); print()
 
 
-def plot_histogram(dlc, dlc_noipc, wsp, c, save=False):
+def plot_histogram(dlc, dlc_noipc, c, wsp=26, save=False):
     # get relevant simuation data
     sims = dlc(wsp=wsp, yaw=0, controller=c)
     ref_sims = dlc_noipc(wsp=wsp, yaw=0)
@@ -106,16 +74,19 @@ def plot_histogram(dlc, dlc_noipc, wsp, c, save=False):
 
 
     if save:
-        plt.savefig('../Figures/Pitchrate/pitchrate_hist_{}_{}.png'.format(c, wsp), dpi=200)
+        plt.savefig('../Figures/{}/{}_pitchrate_hist_{}.png'.format(c, c, wsp), dpi=200)
     plt.show(); print()
 
 
 
 
-def run(dlc, dlc_noipc, wsp, c, save=None):
-    plot_histogram(dlc, dlc_noipc, wsp, c, save=save)
-    plot_angle_timeseries(dlc, dlc_noipc, wsp, c, save=save)
-    plot_rate_timeseries(dlc, dlc_noipc, wsp, c, save=save)
+def run(dlc, dlc_noipc, c, wsp=26, SAVE=None):
+    plot_histogram(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
+    plot_angle_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
+    plot_rate_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
+
+
+
 if __name__ is '__main__':
     if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
 
@@ -126,4 +97,4 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, 26, 'ipc04', save=True)
+    run(dlc, dlc_noipc, 'ipc04', wsp=26, SAVE=True)

@@ -25,7 +25,7 @@ def Spectrum(sim):
 
     return Yol
 
-def run(dlc, dlc_noipc, c, save=True):
+def run(dlc, dlc_noipc, c, SAVE=False):
     Z = []
     WSP = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26]
     Freq = np.linspace(0, 0.8, 1000)
@@ -45,8 +45,10 @@ def run(dlc, dlc_noipc, c, save=True):
     ax.set_ylabel('Frequency [Hz]'); ax.set_xlabel('Wind Speed [m/s]')
     Analysis.SpectralContour3(X, Y, Z, ax)
     Analysis.plotRotorFreq(4, ax)
-    if save:
-        plt.savefig('../Figures/SpectralContour/SpectralContour_{}.png'.format(c), dpi=200)
+
+    if SAVE:
+        plt.savefig('../Figures/{}/{}_SpectralContour.png'.format(c, c), dpi=200)
+    plt.show(); print()
 
 
 

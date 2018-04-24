@@ -12,17 +12,22 @@ from matplotlib import patches
 import math
 
 
-def run(dlc, ref_dlc=None, save=False, key='RBM1'):
+def run(dlc, dlc_noipc, c, SAVE=False):
+
+    keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
+    N = len(keys)
+    Req_l = []
+    Req_l_ref = []
+    for key in keys:
+        Req_l_ref.append(lifetimeReq(dlc_noipc(yaw=0), key))
+        Req_l.append(lifetimeReq(dlc(yaw=0, controller=c), key))
+    print(Req_l_ref)
+    print(Req_l)
+
+    ## TODO make a bargraph
 
 
-    for sims in fullDatasetGen(dlc):
-        Req_l = lifetimeReq(sims, key)
-        # Calculate lifetime equivalent load
-        c = sims[0].controller
-        g = sims[0].Kp
-        print(c, g, Req_l)
 
-    print('no ipc', lifetimeReq(ref_dlc(yaw=0), key))
 
 def wsp_probs(Class=1, dx=2, Range= [4, 26.1]):
     # Weibull Parameters
@@ -87,7 +92,7 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, save=True, key='MBy')
+    run(dlc, dlc_noipc, 'ipc04', SAVE=True)
 
 
 

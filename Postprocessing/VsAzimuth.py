@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 
-def run(dlc, ref_dlc=None, save=None):
+def run(dlc, ref_dlc, c, SAVE=None):
 
-    wsp=16; cont='ipc04'; Kp = -1; keyroot='TD'; ylabel='Tip Deflection [m]'
+    wsp=16; keyroot='TD'; ylabel='Tip Deflection [m]'
     keys = [keyroot + str(x) for x in [1,2,3]]
 
     # get ref sim data
@@ -27,7 +27,7 @@ def run(dlc, ref_dlc=None, save=None):
         refy = np.append(refy, seed.Data[keys].as_matrix(), 0)
 
      # get sim data to plot
-    sim = dlc(yaw=0, wsp=wsp, controller=cont, Kp=Kp)[0]
+    sim = dlc(yaw=0, wsp=wsp, controller=c)[0]
     for i, seed in enumerate(sim):
         if i == 0:
             x = seed.Data.Azim
@@ -36,12 +36,12 @@ def run(dlc, ref_dlc=None, save=None):
         y = np.append(y, seed.Data[keys].as_matrix(), 0)
 
     # Set up plot
-    fig, ax = plt.subplots(3, 2, sharey=True, figsize=[8,6])
+    fig, ax = plt.subplots(3, 2, sharey=True, figsize=[7, 6])
     fig.subplots_adjust(bottom=0.09, wspace=0.05, hspace=0.05)
 
     extent = [0, 360, min(refy.min(), y.min()), max(refy.max(), y.max())]
     hexbinConfig = {'gridsize':30, 'extent':extent, 'linewidths':1}
-    if save:
+    if SAVE:
         hexbinConfig['linewidths'] = 0.25
     ax[0,0].set_title('Without IPC')
     ax[2,0].set_xlabel('Azimuth Angle [deg]')
@@ -67,8 +67,8 @@ def run(dlc, ref_dlc=None, save=None):
     ax[2,1].set_xticks([120, 240, 360])
     #ax[0,0].axvline(x=45, c='w', ls='--', lw=1)
 
-    if save:
-        plt.savefig('../Figures/hexbin_{}.png'.format(keyroot), dpi=200)
+    if SAVE:
+        plt.savefig('../Figures/{}/{}_TDvsAzim.png'.format(c, c), dpi=200)
 
     plt.show(); print()
 
@@ -84,4 +84,4 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, save=False)
+    run(dlc, dlc_noipc, 'ipc04', SAVE=False)
