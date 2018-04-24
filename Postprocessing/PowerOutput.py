@@ -44,11 +44,12 @@ def run(dlc, ref_dlc=None, save=None):
     sns.violinplot(x=x, y=y, hue=hue, split=True)
     plt.legend(loc='upper left')
     #
-    plt.show()
+
 
     #Statistics.run(dlc, ref_dlc, save=save, key='Pelec', unit='W')
     if save:
         plt.savefig('../Figures/Power/Violin_{}_{}.png'.format(key, c), dpi=200)
+    plt.show()
 
 
 
@@ -63,4 +64,4 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc)
+    run(dlc, dlc_noipc, save=True)

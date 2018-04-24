@@ -8,9 +8,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import Analysis, PostProc
 from Modelling import BladeModel, OLResponse
+from scipy import signal, interpolate
 
-
-
+Fs = 100
 
 def Spectrum(sim):
     Ys = []

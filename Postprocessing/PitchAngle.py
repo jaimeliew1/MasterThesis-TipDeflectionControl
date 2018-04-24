@@ -90,7 +90,7 @@ def plot_histogram(dlc, dlc_noipc, wsp, c, save=False):
     ref_sims = dlc_noipc(wsp=wsp, yaw=0)
     # Pitch rate histogram
     fig, ax = plt.subplots()
-    ax.set_xlabel('Blade pitch rate [deg]')
+    ax.set_xlabel('Blade pitch rate [deg/s]')
     ax.set_ylabel('Frequency')
     ax.set_xlim([-20, 20])
     ax.set_ylim([0, 8000])
@@ -99,14 +99,15 @@ def plot_histogram(dlc, dlc_noipc, wsp, c, save=False):
 
 
 
-    ax.hist(sims[0][0].Data.pitchrate1, 30, alpha=0.7, label=c)
-    ax.hist(ref_sims[0][0].Data.pitchrate1, 30, color='k', alpha=0.7, label='No Control')
-
+    ax.hist(sims[0][0].Data.pitchrate1, 30, alpha=0.7, label='With IPC')
+    ax.hist(ref_sims[0][0].Data.pitchrate1, 30, color='k', alpha=0.7, label='No IPC')
+    ax.set_title('wsp={} m/s'.format(wsp))
     ax.legend()
-    plt.show(); print()
+
 
     if save:
         plt.savefig('../Figures/Pitchrate/pitchrate_hist_{}_{}.png'.format(c, wsp), dpi=200)
+    plt.show(); print()
 
 
 
@@ -125,4 +126,4 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, 12, 'ipc04', save=True)
+    run(dlc, dlc_noipc, 26, 'ipc04', save=True)

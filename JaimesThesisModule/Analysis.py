@@ -54,7 +54,7 @@ def SpectralContour3(X, Y, Z, ax=None):
 
     CB = plt.colorbar(CP)
     #CB.set_ticks(np.linspace(0, Z.max(), 6))
-    CB.set_label('$Y_{cl}/Y_{ol}$ [%]')
+    CB.set_label('$Y_{cl}/Y_{ol}-1$ [\%]',usetex=True)
 def SpectralContour2(X, Y, Z, ax=None):
 
     zmax = Z.max()

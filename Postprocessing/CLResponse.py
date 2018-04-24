@@ -60,7 +60,7 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    wsp = 10
+    wsp = 18
 
     # Load transfer functions
     C = IPC04.make()
@@ -81,6 +81,7 @@ if __name__ is '__main__':
     ax.plot(f, Ycl_pred, '--k', label ='$Y_{CL}$ (predicted)')
     ax.plot(f, Ycl(f), 'r', label ='$Y_{CL}$ (actual)')
     ax.set_xlim(f.min(), 1.5)
+    ax.set_title('wsp = {}m/s'.format(wsp))
     ax.legend()
 
     if SAVE:
