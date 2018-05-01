@@ -17,6 +17,7 @@ def make(F1P=0.16, lead=77.5):
     mag, phase = controller.freqResp(F1P)
     controller.K = 1/mag
     controller.K *= 0.1
+    print(controller.freqResp(F1P))
 
 
     return controller.tf

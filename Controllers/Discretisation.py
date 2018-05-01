@@ -10,9 +10,11 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from JaimesThesisModule.ControlDesign import MatchedZeroPole, saveHTC
 
-from IPC04 import make
+from IPC07 import make
 Fs = 100
 SAVE = True
+filename = 'IPC07.htc'
+
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
     fig, axes = plt.subplots(2, 1, figsize=[6,6], sharex=True)
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     C = make()
     Cd = discretise(C, Fs=Fs)
 
-    filename = 'IPC04.htc'
+
     saveHTC(Cd.num, Cd.den, filename)
 
 

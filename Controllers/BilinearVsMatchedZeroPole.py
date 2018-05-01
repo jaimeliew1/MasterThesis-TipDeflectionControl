@@ -18,7 +18,7 @@ from Controllers.Discretisation import discretise
 
 from IPC05 import make
 
-SAVE = True
+SAVE = False
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
     fig, axes = plt.subplots(2, 1, figsize=[6,6], sharex=True)
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     # calculate discrete frequency response
 
-    wd, Hd = signal.freqz(Cbi.num, Cbi.den, worN=1024*4)
+    wd, Hd = signal.freqz(Cbi.num, Cbi.den, worN=1024*8)
     fd = wd/np.pi*(Fs/2)
     magd, phased = 20*np.log10(abs(Hd)), np.angle(Hd, deg=True)
     phased = (phased + 180) % 360 - 180

@@ -8,13 +8,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import Analysis, PostProc
 from Configuration import Config
-from matplotlib import patches
+#from matplotlib import patches
 import math
 
 
 def run(dlc, dlc_noipc, c, SAVE=False):
 
     keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
+    labels = ['Blade (flapwise)', 'Blade (edgewise)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
     N = len(keys)
     Req_l = []
     Req_l_ref = []
@@ -24,7 +25,23 @@ def run(dlc, dlc_noipc, c, SAVE=False):
     print(Req_l_ref)
     print(Req_l)
 
-    ## TODO make a bargraph
+    # make a bargraph
+    width = 0.35
+    ind = np.arange(N)
+    fig, ax = plt.subplots()
+    ax.grid(zorder=0)
+    ax.set_title('Lifetime Equivalent Load')
+    ax.set_ylabel('Moment [kNm]')
+    ax.bar(ind, Req_l_ref, width, zorder=3, label='No IPC')
+    ax.bar(ind + width, Req_l, width, zorder=3, label=c.upper())
+    ax.set_xticks(ind)
+    ax.set_xticklabels(labels, rotation = 30)
+    ax.legend()
+
+    if SAVE:
+        plt.savefig('../Figures/{}/{}_Lifetime_Req.png'.format(c, c), dpi=200)
+
+    plt.show(); print()
 
 
 
@@ -49,7 +66,7 @@ def wsp_probs(Class=1, dx=2, Range= [4, 26.1]):
 
     return dict(zip(Y, P))
 
-def lifetimeReq(sims_, key = 'RBM1'):
+def lifetimeReq(sims_, key='RBM1'):
     wohler = Config.Config.wohler[key]
     # Probability of each wind speed occuring
     P = wsp_probs()

@@ -16,8 +16,8 @@ from JaimesThesisModule import PostProc
 
 
 plt.rc('text', usetex=False)
-SAVERESPONSE= True
-PLOT = False
+SAVERESPONSE= False
+PLOT = True
 SAVEPLOT = False
 
 Fs = 1/0.01

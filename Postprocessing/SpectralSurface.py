@@ -63,7 +63,7 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    run(dlc, dlc_noipc, 'ipc04', save=True)
+    run(dlc, dlc_noipc, 'ipc05', SAVE=False)
 
 
 

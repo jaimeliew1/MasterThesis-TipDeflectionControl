@@ -1,0 +1,13 @@
+		constant 1       5                         ; N  Length of filter
+		; Feed-Forward Coefficients
+		constant 3       0.03525646865726196       ; b0
+		constant 4       -0.13886640355784663      ; b1
+		constant 5       0.2051223335141202        ; b2
+		constant 6       -0.1346705673088696       ; b3
+		constant 7       0.0331581719598272        ; b4
+		; Feed-Backward Coefficients
+		constant 8       1.0                       ; a0
+		constant 9       -3.8383862319879634       ; a1
+		constant 10      5.522308694008737         ; a2
+		constant 11      -3.529375464242967        ; a3
+		constant 12      0.8454556879596864        ; a4

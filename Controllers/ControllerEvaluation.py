@@ -15,8 +15,9 @@ from JaimesThesisModule import ControlDesign
 #plt.rc('text', usetex=False)
 F1p = [0.099, 0.1, 0.105, 0.14, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16]
 
-from Controllers import IPC04
-SAVE = 'IPC04'
+from IPC07 import make
+#SAVE = 'ipc09'
+SAVE=None
 
 
 f = np.linspace(0, 1.5, 1000)
@@ -84,7 +85,7 @@ def plot_Pol_Pcl(P, P_CL, save=False):
     _, mag_P, phase_P = signal.bode(P, w=f*(2*np.pi))
     phase_P = (phase_P+180) % 360 - 180
 
-    _, mag_CL, phase_CL = signal.bode(CL, w=f*(2*np.pi))
+    _, mag_CL, phase_CL = signal.bode(P_CL, w=f*(2*np.pi))
     phase_CL = (phase_CL+180) % 360 - 180
 
     fig, ax = bodeSetup(F1p=0.16)
@@ -97,7 +98,27 @@ def plot_Pol_Pcl(P, P_CL, save=False):
     ax[0].legend(loc='lower left')
 
     if save:
-        plt.savefig('../Figures/{}_OL_CL_bode.png'.format(save), dpi=200)
+        plt.savefig('../Figures/{}/{}_OL_CL_bode.png'.format(save, save), dpi=200)
+
+
+
+def plot_C(C, save=False):
+    # Calculate gain and phase response.
+    _, mag, _ = signal.bode(C, w=f*(2*np.pi))
+
+    fig, ax = magplotSetup(F1p=0.16)
+    ax.plot(f, mag, label='C')
+
+
+
+
+
+    ax.legend()
+
+    if save:
+        plt.savefig('../Figures/{}/{}_C.png'.format(save, save), dpi=200)
+
+
 
 def plot_S(S, save=False):
     # Calculate gain and phase response.
@@ -116,7 +137,7 @@ def plot_S(S, save=False):
     ax.legend()
 
     if save:
-        plt.savefig('../Figures/{}_S.png'.format(save), dpi=200)
+        plt.savefig('../Figures/{}/{}_S.png'.format(save, save), dpi=200)
 
 def plot_Yol_Ycl(Yol, S, save=False):
 
@@ -127,11 +148,11 @@ def plot_Yol_Ycl(Yol, S, save=False):
     ax.set_ylabel('Magnitude [m]')
     ax.plot(f_, Yol(f_), '--k', label='$Y_{OL}$')
     ax.plot(f_, abs(H)*Yol(f_), label ='$Y_{CL}$ (predicted)')
-    ax.set_xlim(f_.min(), 1.5)
+    ax.set_xlim(f_.min(), 5)
     ax.legend()
 
     if save:
-        plt.savefig('../Figures/{}_Yol_Ycl.png'.format(save), dpi=200)
+        plt.savefig('../Figures/{}/{}_Yol_Ycl.png'.format(save, save), dpi=200)
 
 
 
@@ -151,7 +172,7 @@ def plot_L(L, save=False):
 
     ## TODO, show gain and phase margins
     if save:
-        plt.savefig('../Figures/{}_L.png'.format(save), dpi=200)
+        plt.savefig('../Figures/{}/{}_L.png'.format(save, save), dpi=200)
 
 
 
@@ -178,7 +199,7 @@ def plot_nyquist(L, zoom=1.5, save=False):
     axes[1].plot([-1, H_.real], [0, H_.imag], '--r', lw=0.5)
 
     if save:
-        plt.savefig('../Figures/{}_nyquist.png'.format(save), dpi=200)
+        plt.savefig('../Figures/{}/{}_nyquist.png'.format(save, save), dpi=200)
 
 
 
@@ -189,10 +210,10 @@ def plot_nyquist(L, zoom=1.5, save=False):
 
 if __name__ == '__main__':
 
-    wsp = 18
+    wsp =  20
 
     # Load transfer functions
-    C = IPC04.make()
+    C = make()
     P = BladeModel.Blade(wsp)
     Yol = OLResponse.Response(wsp)
 
@@ -204,6 +225,7 @@ if __name__ == '__main__':
 
 
     # PLot Controller Performance
+    plot_C(C, save=SAVE)
     plot_Pol_Pcl(P, P_CL, save=SAVE)
     plot_S(S, save=SAVE)
     plot_Yol_Ycl(Yol, S, save=SAVE)
