@@ -1,3 +1,5 @@
+This version is an adaptation of the tipdeflection IPC project. It is adapted to use RBM as the sensor input instead.
+
 This repository contains only the tools to perform the control design loop.
 The first steps are designing a continuous control transfer function to achieve performance and robust stability. This takes use of the modelled turbine system and the measured open loop plant response (the tip deflection spectrum). 
 

@@ -16,9 +16,9 @@ from JaimesThesisModule import PostProc
 
 
 plt.rc('text', usetex=False)
-SAVERESPONSE= False
+SAVERESPONSE= True
 PLOT = True
-SAVEPLOT = False
+SAVEPLOT = True
 
 Fs = 1/0.01
 
@@ -38,7 +38,7 @@ def plotSetup(wsp):
     ax.set_xlabel('Frequency [Hz]')
     fig.suptitle('Wsp: {}'.format(wsp))
     ax.set_xlim([0.01,5])
-    ax.set_ylim([1e-4, 10])
+    #ax.set_ylim([1e-4, 10])
     ax.set_yscale('log')
     ax.set_xscale('log')
 
@@ -49,7 +49,7 @@ def OLFreqResp(wsp, dlc_noipc, smooth= False):
     Ys = []
     for seed in sim:
         for blade in [1, 2, 3]:
-            key = 'TD{}'.format(blade)
+            key = 'RBM{}'.format(blade)
 
             if not smooth:
                 f, Y = freqResp(seed.Data[key], Fs, fmax=10)
@@ -98,7 +98,7 @@ if __name__ is '__main__':
             ax.legend(['Mean Fourier Transform', 'Binned Mean Fourier Transform'], loc='lower left')
 
             if SAVEPLOT:
-                plt.savefig('../Figures/OLResponse/OLResponse_{}.png'.format(wsp), dpi=200)
+                plt.savefig('../Figures/OLResponse/OLResponse_RBM_{}.png'.format(wsp), dpi=200)
             plt.show(); print()
 
 

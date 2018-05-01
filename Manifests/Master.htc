@@ -499,9 +499,9 @@ begin type2_dll;
 		   dll type2_dll dtu_we_controller inpvec 2     ; 							 #2 Pitch1 demand angle          [rad]
 		   dll type2_dll dtu_we_controller inpvec 3     ; 							 #3 Pitch2 demand angle          [rad]
 		   dll type2_dll dtu_we_controller inpvec 4     ; 							 #4 Pitch3 demand angle          [rad]
-		   mbdy state pos blade1  26 1.0 blade1 only 2;     #5 Blade 1 Flapwise tip deflection [m] (positive towards tower)
-		   mbdy state pos blade2  26 1.0 blade2 only 2;     #6 Blade 2 Flapwise tip deflection [m] (positive towards tower)
-		   mbdy state pos blade3  26 1.0 blade3 only 2;
+		   mbdy momentvec blade1 2  2 blade1 only 1; # blade 1 root RBM ;
+		   mbdy momentvec blade1 2  2 blade2 only 1; # blade 2 root RBM ;
+		   mbdy momentvec blade1 2  2 blade3 only 1; # blade 3 root RBM ;
 
 		   general constant 0;  							#debug mode. 1= debug. 0=do not debug
 	end output;

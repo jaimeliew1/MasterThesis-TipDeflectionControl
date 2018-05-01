@@ -26,7 +26,7 @@ def plotModels(models, save=False):
         axes[0].set_xlim([0.1, 30])
         axes[0].set_xscale('log')
         axes[0].set_yscale('log')
-        axes[0].set_ylim([1e-2, 1e2])
+        #axes[0].set_ylim([1e-2, 1e2])
         axes[1].set_yticks(np.arange(-180, 121, 60))
 
 
