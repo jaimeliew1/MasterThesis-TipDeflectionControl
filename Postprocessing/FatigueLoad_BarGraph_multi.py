@@ -10,7 +10,7 @@ from JaimesThesisModule import PostProc
 
 def run(dlc, dlc_noipc, C, SAVE=False):
     C = ['ipc04', 'ipc05', 'ipc06', 'ipc07', 'ipc08']
-    C = ['ipc04', 'ipc05', 'ipc06', 'ipc07']
+    C = ['ipc04', 'ipc05', 'ipc06']
     keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
     titles = ['Flapwise blade RBM', 'Edgewise blade RBM',
               'Main bearing (tilt)', 'Main bearing (yaw)']

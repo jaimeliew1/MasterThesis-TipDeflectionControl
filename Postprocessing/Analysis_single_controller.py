@@ -29,8 +29,8 @@ if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
 
 
 SAVE = False
-c = 'ipc05'
-import Controllers.IPC05 as IPC
+c = 'ipc06'
+import Controllers.IPC06 as IPC
 
 
 if any(x.shutdown for x in dlc(controller=c, yaw=0)[0]):

@@ -210,7 +210,7 @@ def plot_nyquist(L, zoom=1.5, save=False):
 
 if __name__ == '__main__':
 
-    wsp =  20
+    wsp =  18
 
     # Load transfer functions
     C = make()
