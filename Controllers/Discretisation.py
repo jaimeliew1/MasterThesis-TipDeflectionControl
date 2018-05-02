@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from JaimesThesisModule.ControlDesign import MatchedZeroPole, saveHTC
 
-from IPC07 import make
+from IPC11 import make
 Fs = 100
 SAVE = True
-filename = 'IPC07.htc'
+filename = 'IPC11.htc'
 
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     # plot
     fig, ax = bodeSetup(xlim=[0.01, 10], F1p=0.16)
-    ax[0].set_ylim([-100, 2])
+    #ax[0].set_ylim([-100, 2])
     ax[0].plot(fa, maga, 'k', label='$C$ (Continuous)')
     ax[1].plot(fa, phasea, 'k')
 

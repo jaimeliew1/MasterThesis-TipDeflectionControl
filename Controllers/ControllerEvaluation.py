@@ -15,7 +15,7 @@ from JaimesThesisModule import ControlDesign
 #plt.rc('text', usetex=False)
 F1p = [0.099, 0.1, 0.105, 0.14, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16]
 
-from IPC04 import make
+from IPC_RBM11 import make
 #SAVE = 'ipc09'
 SAVE=None
 
@@ -210,9 +210,7 @@ def plot_nyquist(L, zoom=1.5, save=False):
 
 if __name__ == '__main__':
 
-    wsp =  18
-
-    # Load transfer functions
+    wsp =  18    # Load transfer functions
     C = make()
     P = BladeModel.Blade(wsp)
     Yol = OLResponse.Response(wsp)
