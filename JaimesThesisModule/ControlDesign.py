@@ -50,6 +50,20 @@ class Turbine(object):
         num = L_.den
 
         return signal.TransferFunction(num, den)
+
+
+    @property
+    def T(self):
+        # returns the complementary sensitivity function, T = PC/(1+PC) = L*S
+        # given a plant and
+        # controller transfer function (scipy.signal.TransferFunction objects)
+
+
+        num = np.polymul(self.S.num, self.L.num)
+        den = np.polymul(self.S.den, self.L.den)
+
+        return signal.TransferFunction(num, den)
+
     @property
     def CL(self):
         # returns the close loop transfer function, G_cl = PS given a plant and

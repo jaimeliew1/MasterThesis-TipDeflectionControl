@@ -139,6 +139,33 @@ def plot_S(S, save=False):
     if save:
         plt.savefig('../Figures/{}/{}_S.png'.format(save, save), dpi=200)
 
+
+
+def plot_T(T, save=False):
+    # Calculate gain and phase response.
+
+    _, mag, phase = signal.bode(T, w=f*(2*np.pi))
+    phase = (phase + 180) % 360 - 180
+
+
+    fig, ax = bodeSetup(F1p=0.16)
+    ax[0].plot(f, mag, label='Complementary Sensitivity function')
+
+    ax[1].plot(f, phase)
+
+    ax[0].legend(loc='lower left')
+
+
+    # Draw area under curve
+#    verts = [(0, 0)] + list(zip(list(f), list(mag))) + [(f.max(), 0)]
+#    poly = Polygon(verts, facecolor='0.9', edgecolor='0.5')
+#    ax.add_patch(poly)
+
+    if save:
+        plt.savefig('../Figures/{}/{}_T.png'.format(save, save), dpi=200)
+
+
+
 def plot_Yol_Ycl(Yol, S, save=False):
 
     w, H = signal.freqresp(S)
@@ -221,6 +248,7 @@ if __name__ == '__main__':
     sys = ControlDesign.Turbine(P, C)
     L = sys.L
     S = sys.S
+    T = sys.T
     P_CL = sys.CL
 
 
@@ -228,10 +256,17 @@ if __name__ == '__main__':
     plot_C(C, save=SAVE)
     plot_Pol_Pcl(P, P_CL, save=SAVE)
     plot_S(S, save=SAVE)
+    plot_T(T, save=SAVE)
     plot_Yol_Ycl(Yol, S, save=SAVE)
 
     # Plot Controller Robust Stability
     plot_L(L, save=SAVE)
     plot_nyquist(L, zoom=1.5, save=SAVE)
+
+    # determine tip trajectory tracking precompensator paramams
+    _, mag, phase = signal.bode(T, w=0.16*2*np.pi)
+    print('To achieve tip trajectory of A*cos(omega*t)')
+    print('use {:2.2f}*A*cos(omega*t + {:2.2f}/180*pi)'.format(
+            1/10**(mag[0]/20), phase[0]))
 
 

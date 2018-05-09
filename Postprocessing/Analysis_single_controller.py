@@ -24,13 +24,13 @@ if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
     dlc_noipc = PostProc.DLC('dlc11_0')
     dlc_noipc.analysis(mode='fullload')
 
-    dlc = PostProc.DLC('dlc11_1')
+    dlc = PostProc.DLC('dlc11_2')
     dlc.analysis(mode='fullload')
 
 
 SAVE = False
-c = 'ipc06'
-import Controllers.IPC06 as IPC
+c = 'ipc_rbm04'
+import Controllers.IPC08 as IPC
 
 
 if any(x.shutdown for x in dlc(controller=c, yaw=0)[0]):
@@ -42,7 +42,7 @@ else:
 if not CompleteDataset(dlc, c):
     print('DATASET INCOMPLETE!')
 else:
-    CLResponse.run(dlc, dlc_noipc, c, IPC.make(), SAVE=SAVE)
+    #CLResponse.run(dlc, dlc_noipc, c, IPC.make(), SAVE=SAVE)
     FatigueLoad_BarGraph.run(dlc, dlc_noipc, c, SAVE=SAVE)
     SpectralSurface.run(dlc, dlc_noipc, c, SAVE=SAVE)
     VsAzimuth.run(dlc, dlc_noipc, c, SAVE=SAVE)
