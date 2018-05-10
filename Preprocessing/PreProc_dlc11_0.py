@@ -23,7 +23,7 @@ Constants = {'Tstart'   :   100,
 
 Variables = {
              'wsp'          : [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26],
-             'yaw'          : [-10, 0, 10],
+             'yaw'          : [0],
              '_seed'        : [1, 2, 3]}
 
 
@@ -38,8 +38,8 @@ manifest = PreProc.Manifest(basename, Constants, Variables, Functionals)
 
 manifest.checkTemplate('../Manifests/Master.htc')
 manifest.missingRes()
-#manifest.save_csv()
-#manifest.generate_htc_files('../Manifests/Master.htc', overwrite=True)
+manifest.save_csv()
+manifest.generate_htc_files('../Manifests/Master.htc', overwrite=True)
 #manifest.save_csv(basename + '.csv')
 #!!! if manifest.template_valid('Master.htc'):
 #!!!    manifest.generate(manifest=True, htc=True, pbs=True, mode='unrun') #or 'missing', or 'all'

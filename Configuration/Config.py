@@ -60,7 +60,8 @@ class Config(object):
                 'IPCDem1'   : 99,   #IPC pitch demand - blade 1 [rad]
                 'IPCDem2'   : 100,
                 'IPCDem3'   : 101,
-                'status'    : 91  }  # Turbine status <=0 okay, >0 shutdown}
+                'status'    : 91,  # Turbine status <=0 okay, >0 shutdown}
+                'tcl'       : 111} # Tower clearance
 
     # freqCh: the names of the channels which are to be frequency analysed.
     freqCh = ['PPDem1','pitch1','RBM1','RBMe1','RBMt1','MBx','MBy','MBz',

@@ -9,7 +9,7 @@ Created on Wed May  9 09:21:53 2018
 import numpy as np
 import matplotlib.pyplot as plt
 
-savePlots = True
+savePlots = False
 saveShear = False
 # Parameters
 #U = 18 # free wind speed at hub height [m/s]
@@ -64,7 +64,7 @@ if saveShear:
         template = f.read()
 
     for U in wsp:
-        V = InverseShearProfile(z, T/2)/U
+        V = InverseShearProfile(z, T/2, U)/U
         string = ''
         for v in V:
             string += '{:2.6E} {:2.6E} {:2.6E}\n'.format(v, v, v)

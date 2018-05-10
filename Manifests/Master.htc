@@ -721,6 +721,8 @@ begin output;
    dll type2_dll servo_with_limits inpvec 3 # pitch 3 [rad];
 ; Check tower clearence
    dll type2_dll towerclearance_mblade inpvec 1 # Bltip tow min d [m];
+; Oops. Main bearing loads recast into fixed frame of reference   
+   mbdy momentvec shaft  4 1  towertop # main bearing ;
 end output;
 ;
 exit;

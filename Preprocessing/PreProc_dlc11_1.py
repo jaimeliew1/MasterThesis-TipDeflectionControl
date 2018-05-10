@@ -21,8 +21,8 @@ Constants = {'Tstart'   :   100,
                  }
 
 Variables = {
-             'controller'   : ['ipc04', 'ipc05', 'ipc06', 'ipc07', 'ipc08',
-                                'ipc09', 'ipc10', 'ipc11'],
+             'controller'   : ['ipcpi', 'ipc04', 'ipc05', 'ipc06', 'ipc07',
+                               'ipc08', 'ipc09', 'ipc10', 'ipc11'],
              'Kp'           : [-1],
              'yaw'          : [0],
              'wsp'          : [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26],
