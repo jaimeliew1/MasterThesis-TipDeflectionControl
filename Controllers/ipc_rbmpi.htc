@@ -1,0 +1,7 @@
+		constant 1       2                         ; N  Length of filter
+		; Feed-Forward Coefficients
+		constant 3       5.1255e-06                ; b0
+		constant 4       -5.0745e-06               ; b1
+		; Feed-Backward Coefficients
+		constant 5       1.0                       ; a0
+		constant 6       -1.0                      ; a1

@@ -21,9 +21,7 @@ Constants = {'Tstart'   :   100,
                  }
 
 Variables = {
-             'controller'   : ['ipc_rbm04', 'ipc_rbm05', 'ipc_rbm06',
-                               'ipc_rbm07', 'ipc_rbm08','ipc_rbm09',
-                               'ipc_rbm10', 'ipc_rbm11'],
+             'controller'   : ['ipc_rbmpi', 'ipc_rbm04', 'ipc_rbm07'],
              'Kp'           : [1], # Note: sign changed compared to TD control
              'yaw'          : [0],
              'wsp'          : [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26],

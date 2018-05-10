@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from JaimesThesisModule.ControlDesign import MatchedZeroPole, saveHTC
 
-from IPC11 import make
+from IPC_RBMPI import make
 Fs = 100
 SAVE = True
-filename = 'IPC11.htc'
+filename = 'ipc_rbmpi.htc'
 
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
