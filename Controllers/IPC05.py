@@ -22,8 +22,19 @@ def make(F1P=0.16, lead=77.5):
 
 
 if __name__ == '__main__':
+    wsp = 18
+    f1p = 0.16 # hz
 
+    P = BladeModel.Blade(wsp)
     C = make()
+    sys = ControlDesign.Turbine(P, C)
+
+    # stability margin
+    print('Sm: {:2.3f}\n'.format(sys.sm))
+
+    # performance at f1p to f4p
+    for i, perf in enumerate(sys.performance(f1p)):
+        print('f{}p: {:+.2f}%'.format(i+1, perf*100))
 
 
 

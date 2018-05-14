@@ -26,11 +26,20 @@ class Turbine(object):
     def sm(self):
         # Returns the stability margin of the system
         w_ = np.linspace(0, 1.5, 10000)*2*np.pi
-        w_ = np.append(w_, [100])
+        w_ = np.append(w_[1:], [100])
 
         w, H = signal.freqresp(self.L, w=w_)
 
         return min(np.sqrt((H.real + 1)**2 + H.imag**2))
+
+    def performance(self, f1p):
+        # Returns the fractional change in tip deflection
+        # amplitude at f1p, f2p, f3p and f4p in an array.
+        S = self.S
+        w = f1p*np.pi*2*np.array([1,2,3,4])
+
+        _, H = signal.freqresp(S, w=w)
+        return abs(H) - 1
 
     @property
     def L(self):
@@ -191,10 +200,8 @@ class Controller2(object):
 
 def _stabilityMargin( w, H):
     ind_min = np.argmin(np.sqrt((H.real + 1)**2 + H.imag**2))
-    #sm_w = w[ind_min]
-    #sm = np.sqrt((H[ind_min].real + 1)**2 + H[ind_min].imag**2)
-
-    return H[ind_min]
+    sm = np.sqrt((H[ind_min].real + 1)**2 + H[ind_min].imag**2)
+    return sm, H[ind_min]
 
 
 class Controller(object):

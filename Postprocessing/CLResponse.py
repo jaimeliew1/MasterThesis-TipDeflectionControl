@@ -54,7 +54,7 @@ def run(dlc, dlc_noipc, c, C, SAVE=False):
 
 
     WSP = [6, 12, 18, 24]
-
+    fnp = 0.16*np.array([1, 2, 3, 4])
     for wsp in WSP:
         # Load transfer functions
         P = BladeModel.Blade(wsp)
@@ -81,6 +81,11 @@ def run(dlc, dlc_noipc, c, C, SAVE=False):
             plt.savefig('../Figures/{}/{}_TipDeflection_Spectrum_{}.png'.format(c, c, wsp), dpi=200)
         plt.show(); print()
 
+        for f in fnp:
+            pred = abs(signal.freqresp(system.S, f*2*np.pi)[1][0])*100 - 100
+            act = Ycl(f)/Yol(f)*100-100
+            print('{:2.2f}%, {:2.2f}%'.format(pred, act))
+
 
 
 if __name__ is '__main__':
@@ -92,8 +97,8 @@ if __name__ is '__main__':
         dlc = PostProc.DLC('dlc11_1')
         dlc.analysis(mode=mode)
 
-    from Controllers import IPC04
-    c = 'ipc04'
-    run(dlc, dlc_noipc, c, IPC04.make(), SAVE=False)
+    from Controllers.IPC_PI import make
+    c = 'ipcpi'
+    run(dlc, dlc_noipc, c, make(), SAVE=False)
 
 

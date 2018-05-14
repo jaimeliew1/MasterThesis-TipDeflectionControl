@@ -15,12 +15,12 @@ from JaimesThesisModule import ControlDesign
 #plt.rc('text', usetex=False)
 F1p = [0.099, 0.1, 0.105, 0.14, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16]
 
-from IPC_PI import make
+from IPC05 import make
 #SAVE = 'ipc09'
 SAVE=None
 
 
-f = np.linspace(0, 1.5, 1000)
+f = np.linspace(0, 1.5, 1000)[1:]
 
 
 
@@ -99,7 +99,7 @@ def plot_Pol_Pcl(P, P_CL, save=False):
 
     if save:
         plt.savefig('../Figures/{}/{}_OL_CL_bode.png'.format(save, save), dpi=200)
-
+    plt.show(); print()
 
 
 def plot_C(C, save=False):
@@ -110,14 +110,11 @@ def plot_C(C, save=False):
     ax.plot(f, mag, label='C')
 
 
-
-
-
     ax.legend()
 
     if save:
         plt.savefig('../Figures/{}/{}_C.png'.format(save, save), dpi=200)
-
+    plt.show(); print()
 
 
 def plot_S(S, save=False):
@@ -138,7 +135,7 @@ def plot_S(S, save=False):
 
     if save:
         plt.savefig('../Figures/{}/{}_S.png'.format(save, save), dpi=200)
-
+    plt.show(); print()
 
 
 def plot_T(T, save=False):
@@ -163,7 +160,7 @@ def plot_T(T, save=False):
 
     if save:
         plt.savefig('../Figures/{}/{}_T.png'.format(save, save), dpi=200)
-
+    plt.show(); print()
 
 
 def plot_Yol_Ycl(Yol, S, save=False):
@@ -180,7 +177,7 @@ def plot_Yol_Ycl(Yol, S, save=False):
 
     if save:
         plt.savefig('../Figures/{}/{}_Yol_Ycl.png'.format(save, save), dpi=200)
-
+    plt.show(); print()
 
 
 def plot_L(L, save=False):
@@ -201,7 +198,7 @@ def plot_L(L, save=False):
     if save:
         plt.savefig('../Figures/{}/{}_L.png'.format(save, save), dpi=200)
 
-
+    plt.show(); print()
 
 
 def plot_nyquist(L, zoom=1.5, save=False):
@@ -212,8 +209,8 @@ def plot_nyquist(L, zoom=1.5, save=False):
     axes[1].yaxis.tick_right(); axes[1].set_ylabel('')
 
 
-    w_ = np.linspace(0, 1.5, 1e4)*2*np.pi
-    w_ = np.append(w_, [100])
+    w_ = np.linspace(0, 1.5, 10**4)*2*np.pi
+    w_ = np.append(w_[1:], [100])
     _, H = signal.freqresp(L, w=w_)
     axes[0].plot(H.real, H.imag, 'k', lw=1)
     axes[0].plot(H.real, -H.imag, '--k', lw=1)
@@ -222,11 +219,13 @@ def plot_nyquist(L, zoom=1.5, save=False):
     axes[1].plot(H.real, -H.imag, '--k', lw=1)
 
     # plot stability margin
-    H_ = ControlDesign._stabilityMargin(w_, H)
+    sm, H_ = ControlDesign._stabilityMargin(w_, H)
     axes[1].plot([-1, H_.real], [0, H_.imag], '--r', lw=0.5)
 
     if save:
         plt.savefig('../Figures/{}/{}_nyquist.png'.format(save, save), dpi=200)
+    plt.show(); print()
+    return sm
 
 
 
@@ -261,12 +260,17 @@ if __name__ == '__main__':
 
     # Plot Controller Robust Stability
     plot_L(L, save=SAVE)
-    plot_nyquist(L, zoom=1.5, save=SAVE)
+    sm = plot_nyquist(L, zoom=1.5, save=SAVE)
 
     # determine tip trajectory tracking precompensator paramams
     _, mag, phase = signal.bode(T, w=0.16*2*np.pi)
     print('To achieve tip trajectory of A*cos(omega*t)')
     print('use {:2.2f}*A*cos(omega*t + {:2.2f}/180*pi)'.format(
             1/10**(mag[0]/20), phase[0]))
+    print('Stability Margin: sm = {:2.3}'.format(sm))
+    for i in [1, 2, 3, 4]:
+        _, H = signal.freqresp(S, w=i*0.16*2*np.pi)
+        print('f_{}p performance: {:2.2f}%'.format(i, abs(H[0])*100-100))
+
 
 

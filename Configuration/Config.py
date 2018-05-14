@@ -40,9 +40,9 @@ class Config(object):
                 'RBMt1'     : 28,  #torsional root bending moment [kNm]
                 'RBMt2'     : 31,
                 'RBMt3'     : 34,
-                'MBx'       : 23, #Main bearing moment [kNm]
-                'MBy'       : 24,
-                'MBz'       : 25,
+                'MBx'       : 112,#23, #Main bearing moment [kNm]
+                'MBy'       : 114,#24,
+                'MBz'       : 113,#25,
                 'MTBx'      : 17, #Tower base moment [kNm]
                 'MTBy'      : 18,
                 'TD1'       : 49,   #Tip deflection - blade 1 [m]
