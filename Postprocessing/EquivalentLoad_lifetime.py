@@ -14,7 +14,7 @@ import math
 
 def run(dlc, dlc_noipc, c, SAVE=False):
 
-    keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
+    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
     labels = ['Blade (flapwise)', 'Blade (edgewise)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
     N = len(keys)
     Req_l = []
@@ -66,16 +66,17 @@ def wsp_probs(Class=1, dx=2, Range= [4, 26.1]):
 
     return dict(zip(Y, P))
 
-def lifetimeReq(sims_, key='RBM1'):
-    wohler = Config.Config.wohler[key]
+def lifetimeReq(sims_, key='RBM'):
+    #wohler = Config.Config.wohler[key]
+    wohler = {'RBMf':10, 'RBMe':10, 'RBMt':10, 'MBt':4, 'MBy':4}
     # Probability of each wind speed occuring
     P = wsp_probs()
     Y = 0
     for sim in sims_:
         wsp = sim.wsp
-        Y += float(sim.Req[key]**wohler*P[wsp])
+        Y += float(sim.data[key]**wohler[key]*P[wsp])
 
-    Req_l = Y**(1/wohler)
+    Req_l = Y**(1/wohler[key])
 
     return Req_l
 
@@ -100,16 +101,13 @@ def fullDatasetGen(dlc):
 
 if __name__ is '__main__':
 
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
 
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
-
-    run(dlc, dlc_noipc, 'ipc04', SAVE=True)
+    run(dlc, dlc_noipc, 'ipcpi', SAVE=False)
 
 
 

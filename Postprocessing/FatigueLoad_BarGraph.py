@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 def run(dlc, dlc_noipc, c, SAVE=False):
-    keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
+    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
     titles = ['Flapwise blade RBM', 'Edgewise blade RBM',
               'Main bearing (tilt)', 'Main bearing (yaw)']
     WSP = np.array([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26])
@@ -20,10 +20,10 @@ def run(dlc, dlc_noipc, c, SAVE=False):
 
         for i, wsp in enumerate(WSP):
             sim = dlc(wsp=wsp, yaw=0, controller=c)[0]
-            Req_cl[i] = float(sim.Req[key])
+            Req_cl[i] = float(sim.data[key])
 
             sim_ref = dlc_noipc(wsp=wsp, yaw=0)[0]
-            Req_ol[i] = float(sim_ref.Req[key])
+            Req_ol[i] = float(sim_ref.data[key])
 
        # bar graph
         width = 0.7
@@ -44,13 +44,15 @@ def run(dlc, dlc_noipc, c, SAVE=False):
 
 
 if __name__ is '__main__':
-   if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
+
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
+
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
+
+    run(dlc, dlc_noipc, 'ipc07', SAVE=False)
 
 
 

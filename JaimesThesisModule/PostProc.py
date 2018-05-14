@@ -26,7 +26,8 @@ import pandas as pd
 import itertools
 from Configuration.Config import Config
 from JaimesThesisModule.Misc import readHawc2Res, EquivalentLoad
-from scipy import signal
+from scipy import signal, interpolate
+import matplotlib.pyplot as plt
 
 
 
@@ -34,8 +35,10 @@ from scipy import signal
 
 
 class Seed(object):
-    def __init__(self, i, df=None):
+    def __init__(self, i, resFolder, df=None):
         self.ind = i
+        self.resFolder = resFolder
+        self.data = None
         if df is not None:
             self.filename = df.filename
             self.wsp = df.wsp
@@ -49,15 +52,7 @@ class Seed(object):
             self.controller = None
             self.Kp = None
             self.seed = None
-        self.Data = None
-        self.fData = None
-        self.Req = None
-        self.shutdown = None
-        self.max = None
-        self.min = None
-        self.mean = None
-        self.std = None
-        self.pitchtravel = None
+
 
 
     def __repr__(self):
@@ -76,95 +71,102 @@ class Seed(object):
         else:
             return False
 
-    def loadFromSel(self, resFolder, channels=None):
-        self.Data = readHawc2Res(resFolder + self.filename, channels=channels)
+    def loadFromSel(self, channels=None):
+        return readHawc2Res(self.resFolder + self.filename, channels=channels)
 
     def load(self, resFolder, light=False):
-        f = np.load(resFolder + self.filename + '.npz')
-        self.fData = pd.DataFrame(f['fData'], columns=f['fDataLab'])
-        self.Req = pd.DataFrame(f['Req'], columns=f['ReqLab'])
-        self.shutdown = f['shutdown']
-        self.mean = pd.DataFrame(np.reshape(f['mean'], [1,-1]), columns=f['DataLab'])
-        self.std = pd.DataFrame(np.reshape(f['std'], [1,-1]), columns=f['DataLab'])
-        self.max = pd.DataFrame(np.reshape(f['max'], [1,-1]), columns=f['DataLab'])
-        self.min = pd.DataFrame(np.reshape(f['min'], [1,-1]), columns=f['DataLab'])
-        self.pitchtravel = f['pitchtravel']
-        if not light:
-            self.Data = pd.DataFrame(f['Data'], columns=f['DataLab'])
+        pass
 
     def save(self, resFolder):
-        toSave = {'Data'    : self.Data,
-                  'DataLab' : self.Data.keys(),
-                  'fData'   : self.fData,
-                  'fDataLab': self.fData.keys(),
-                  'Req'     : self.Req,
-                  'ReqLab'  : self.Req.keys(),
-                  'shutdown': self.shutdown,
-                  'mean'    : self.mean,
-                  'std'     : self.std,
-                  'max'     : self.max,
-                  'min'     : self.min,
-                  'pitchtravel': self.pitchtravel}
-
-        np.savez_compressed(resFolder + self.filename + '.npz', **toSave)
+        pass
 
     def analysis(self, freqCh=None, fmax=None, wohler=None, nperseg=4096):
-        if self.Data is None:
-            print('No Data loaded')
-            return -1
+        self.data = np.zeros(11)
+        Data = self.loadFromSel(Config.channels)
+
+
+
+        # Equivalent load analysis.
+        wohler = {
+    'MBx': 4,'MBy': 4,'MBz': 4,'RBM1': 10,'RBM2': 10,'RBM3': 10,'RBMe1': 10,
+    'RBMe2': 10,'RBMe3': 10,'RBMt1': 10,'RBMt2': 10,'RBMt3': 10}
+
+        Req = np.zeros(len(wohler.keys()))
+        for i, (channel, woh) in enumerate(wohler.items()):
+            Req[i], _, _ = EquivalentLoad(Data[channel], 600, woh)
+
+        Req = dict(zip(wohler.keys(), Req))
+
+        # flapwise moment (RBMf)
+        root = 'RBM'; ind = 0
+        keys = [root + str(x) for x in [1, 2, 3]]
+        temp = sum(1/3*Req[key]**wohler[key] for key in keys)
+        self.data[ind] = temp**(1/wohler[keys[0]])
+
+        # edgewise moment (RBMe)
+        root = 'RBMe'; ind = 1
+        keys = [root + str(x) for x in [1, 2, 3]]
+        temp = sum(1/3*Req[key]**wohler[key] for key in keys)
+        self.data[ind] = temp**(1/wohler[keys[0]])
+
+        # torsion  moment (RBMt)
+        root = 'RBMt'; ind = 2
+        keys = [root + str(x) for x in [1, 2, 3]]
+        temp = sum(1/3*Req[key]**wohler[key] for key in keys)
+        self.data[ind] = temp**(1/wohler[keys[0]])
+
+        # Main bearing tilt moment (MBt)
+        self.data[3] = Req['MBx']
+
+        # Main bearing yaw moment (MBy)
+        self.data[4] = Req['MBy']
 
 
         # Frequency response analysis
-        self.Fs = 1/0.01 # Sampling frequency [hz], AUTOMATICALLY DETERMINE THIS
-        if fmax is None:
-            fmax = self.Fs/2 # Nyquist frequency
-        if freqCh is None:
-            freqCh = self.Data.keys()
+        Fs = 100
+        Ys = []
+        for blade in [1, 2, 3]:
+            key = 'TD{}'.format(blade)
+            f, Py = signal.welch(Data[key], Fs, nperseg=1024*8)
+            Ys.append(np.sqrt(Fs*Py/60000))
+
+        Yave = np.mean(Ys, axis=0)
+        Yol = interpolate.interp1d(f, Yave, kind='linear',
+                                   bounds_error=False)
+
+        self.data[5:9] = Yol(0.16*np.array([1, 2, 3, 4]))
 
 
-        temp = dict()
-        for key in freqCh:
-            f, resp = signal.welch(self.Data[key], self.Fs, nperseg=nperseg)
-            temp[key] = resp[f < fmax]
-        temp['f'] = f[f < fmax]
-        self.fData = pd.DataFrame(temp)
-
-        #Shutdown analysis
-        if any(self.Data.status > 0):
-            self.shutdown = 1
+    #Shutdown analysis
+        if any(Data.status > 0):
+            self.data[9] = 1
         else:
-            self.shutdown = 0
+            self.data[9] = 0
 
 
-        #statistical analysis
-        if not self.shutdown:
-            self.mean = self.Data.mean()
-            self.max = self.Data.max()
-            self.min = self.Data.min()
-            self.std = self.Data.std()
-        else:
-            allnans = [np.full(len(self.Data.keys()), np.nan)]
-            self.mean = pd.DataFrame(allnans, columns = self.Data.keys())
-            self.max = pd.DataFrame(allnans, columns = self.Data.keys())
-            self.min = pd.DataFrame(allnans, columns = self.Data.keys())
-            self.std = pd.DataFrame(allnans, columns = self.Data.keys())
+        # tower clearance analysis
 
-        #Equivalent load analysis.
-        if wohler is not None:
+        # Finds and lists the lower peaks (valleys) in a time series by
+        # finding reversals. Only returns the values, not the index/time.
+        peaks = []
+        for i, x in enumerate(Data.tcl):
+            if i == 0 or i == len(Data.tcl)-1:
+                continue
+
+            if (Data.tcl[i-1] > x) and (Data.tcl[i+1] > x):
+                peaks.append(x)
+
+        self.data[10] = min(peaks)
 
 
-            self.Req = np.zeros(len(wohler.keys()))
-            for i, (channel, woh) in enumerate(wohler.items()):
-                if self.shutdown == 1:
-                    self.Req[i] = np.nan
-                else:
-                    self.Req[i], _, _ = EquivalentLoad(self.Data[channel], 600, woh)
+        columns = ['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy', 'A1p', 'A2p',
+                   'A3p','A4p','shutdown','tcl']
+        self.data = pd.Series(self.data, index=columns)
 
-            self.Req = pd.DataFrame(np.reshape(self.Req, [1, -1]), columns=wohler.keys())
 
-        # Pitch Travel analysis
-        self.pitchtravel = [np.trapz(abs(self.Data['pitchrate' + str(i)]), self.Data.t) for i in [1,2,3]]
-        self.pitchtravel = np.mean(self.pitchtravel)
+#        # Pitch Travel analysis
+#        self.pitchtravel = [np.trapz(abs(self.Data['pitchrate' + str(i)]), self.Data.t) for i in [1,2,3]]
+#        self.pitchtravel = np.mean(self.pitchtravel)
 
 
 
@@ -173,6 +175,7 @@ class Seed(object):
 class Simulation(object):
     def __init__(self, i, df=None, seeds=None):
         self.ind = i
+        self.data = None
         if df is not None:
             self.wsp = df.wsp
             self.controller = df.controller
@@ -183,10 +186,6 @@ class Simulation(object):
             self.controller = None
             self.Kp = None
             self.yaw = None
-        self.fData = None
-        self.Req = None
-        self.shutdown = None
-        self.pitchtravel = None
         self.seeds = []
 
 
@@ -195,6 +194,9 @@ class Simulation(object):
 
     def __repr__(self):
         return('Simulation: {} wsp: {} cont: {} Kp: {} yaw: {}'.format(self.ind, self.wsp, self.controller, self.Kp, self.yaw))
+
+
+
     def __len__(self):
         return len(self.seeds)
 
@@ -206,6 +208,8 @@ class Simulation(object):
     def __getitem__(self, index):
         return self.seeds[index]
 
+
+
     def addSeeds(self, seeds):
         for seed in seeds:
             if seed.wsp != self.wsp:
@@ -216,66 +220,84 @@ class Simulation(object):
                 print('Kp doesn''t match!')
             self.seeds.append(seed)
 
-    def loadFromSel(self, resFolder, channels=None):
-        for seed in self.seeds:
-            seed.loadFromSel(resFolder, channels=channels)
+
+
 
     def save(self, resFolder):
-        for seed in self.seeds:
-            seed.save(resFolder)
+        pass
 
     def load(self, resFolder, light=False):
-        for seed in self.seeds:
-            seed.load(resFolder, light=light)
+        pass
 
 
     def analysis(self, freqCh=None, fmax=None, wohler=None, nperseg=4096, resfolder=None):
+
+
         N = len(self.seeds)
 
-        for i, seed in enumerate(self.seeds):
-            seed.analysis(freqCh, fmax, wohler, resfolder=resfolder)
+        self.data = dict()
 
-            if i == 0:
-                self.fData =seed.fData/N
-                self.Req = seed.Req/N
-                self.shutdown = seed.shutdown/N
-                self.mean = seed.mean/N
-                self.std = seed.std/np.sqrt(N) #!!! Double check this
-                self.max = seed.max
-                self.min = seed.min
-                self.pitchtravel = seed.pitchtravel/N
-            else:
-                self.fData += seed.fData/N
-                self.Req += seed.Req/N
-                self.shutdown += seed.shutdown/N
-                self.mean += seed.mean/N
-                self.std = seed.std/np.sqrt(N) #!!! double check this
-                self.max = np.maximum(self.max, seed.max)
-                self.min = np.minimum(self.min, seed.min)
-                self.pitchtravel += seed.pitchtravel/N
+        wohler = [10, 10, 10, 4, 4]
+        # Req
+        # for each channel (RBMf, RBMe, etc...)
+        for i, key in enumerate(['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy']):
+            temp = sum(1/N*seed.data[key]**wohler[i] for seed in self.seeds)
+            self.data[key] = temp**(1/wohler[i])
 
-    def simAnalysis(self):
-        N = len(self.seeds)
-        for i, seed in enumerate(self.seeds):
+        for i, key in zip([5, 6, 7, 8, 9], ['A1p', 'A2p',
+                   'A3p','A4p','shutdown']):
+            self.data[key] = np.mean([seed.data[key] for seed in self.seeds])
 
-            if i == 0:
-                self.fData =seed.fData/N
-                self.Req = seed.Req/N
-                self.shutdown = seed.shutdown/N
-                self.mean = seed.mean/N
-                self.std = seed.std/np.sqrt(N) #!!! Double check this
-                self.max = seed.max
-                self.min = seed.min
-                self.pitchtravel = seed.pitchtravel/N
-            else:
-                self.fData += seed.fData/N
-                self.Req += seed.Req/N
-                self.shutdown += seed.shutdown/N
-                self.mean += seed.mean/N
-                self.std = seed.std/np.sqrt(N) #!!! double check this
-                self.max = np.maximum(self.max, seed.max)
-                self.min = np.minimum(self.min, seed.min)
-                self.pitchtravel += seed.pitchtravel/N
+        self.data['tcl'] = min(seed.data['tcl'] for seed in self.seeds)
+
+        self.data = pd.Series(list(self.data.values()),
+                              index = self.data.keys())
+
+#        for i, seed in enumerate(self.seeds):
+
+#            seed.analysis(freqCh, fmax, wohler, resfolder=resfolder)
+#
+#            if i == 0:
+#                self.fData =seed.fData/N
+#                self.Req = seed.Req/N
+#                self.shutdown = seed.shutdown/N
+#                self.mean = seed.mean/N
+#                self.std = seed.std/np.sqrt(N) #!!! Double check this
+#                self.max = seed.max
+#                self.min = seed.min
+#                self.pitchtravel = seed.pitchtravel/N
+#            else:
+#                self.fData += seed.fData/N
+#                self.Req += seed.Req/N
+#                self.shutdown += seed.shutdown/N
+#                self.mean += seed.mean/N
+#                self.std = seed.std/np.sqrt(N) #!!! double check this
+#                self.max = np.maximum(self.max, seed.max)
+#                self.min = np.minimum(self.min, seed.min)
+#                self.pitchtravel += seed.pitchtravel/N
+
+#    def simAnalysis(self):
+#        N = len(self.seeds)
+#        for i, seed in enumerate(self.seeds):
+#
+#            if i == 0:
+#                self.fData =seed.fData/N
+#                self.Req = seed.Req/N
+#                self.shutdown = seed.shutdown/N
+#                self.mean = seed.mean/N
+#                self.std = seed.std/np.sqrt(N) #!!! Double check this
+#                self.max = seed.max
+#                self.min = seed.min
+#                self.pitchtravel = seed.pitchtravel/N
+#            else:
+#                self.fData += seed.fData/N
+#                self.Req += seed.Req/N
+#                self.shutdown += seed.shutdown/N
+#                self.mean += seed.mean/N
+#                self.std = seed.std/np.sqrt(N) #!!! double check this
+#                self.max = np.maximum(self.max, seed.max)
+#                self.min = np.minimum(self.min, seed.min)
+#                self.pitchtravel += seed.pitchtravel/N
 
 
 
@@ -289,16 +311,21 @@ class DLC(object):
     def __init__(self, basename, modelpath=None, filename=None):
         if filename is None:
             filename = Config.manifestpath + basename + '.csv'
+
+
+
         if not os.path.isfile(filename):
             raise FileNotFoundError('Parameter file {} does not exist.'.format(filename))
         self.seedParams = pd.DataFrame.from_csv(filename, index_col=None)
+
 
         self.basename = basename
         self.Sims = []
         self.seeds = []
 
+        resFolder = Config.modelpath + 'res/' + self.basename + '/'
         for i, row in self.seedParams.iterrows():
-            self.seeds.append(Seed(i, row))
+            self.seeds.append(Seed(i, resFolder, row))
 
         for seed in self.missingResults():
             print('{} is missing.'.format(seed))
@@ -308,15 +335,26 @@ class DLC(object):
 
     #def __iter__(self):
         #return iter(self.Sims)#
+
+
+
+
     def __getitem__(self, index):
         return self.Sims[index]
+
+
+
 
     def __call__(self, **kwargs):
         mask = self.mask(**kwargs)
         return [i for (i, v) in zip(self.Sims, mask) if v]
 
+
+
     def __len__(self):
         return len(self.Sims)
+
+
 
     def missingResults(self):
         # Returns list of Seed objects coresponding to
@@ -328,6 +366,9 @@ class DLC(object):
                 missingSeeds.append(seed)
         return missingSeeds
 
+
+
+
     def loadResults(self, ch=None):
         resfolder = Config.modelpath + 'res/' + self.basename + '/'
 
@@ -336,6 +377,8 @@ class DLC(object):
         if ch is not None:
             for sim in self.Sims:
                 sim.loadFromSel(resfolder, ch)
+
+
 
 
     def consolidateSimulations(self, unique= ['wsp', 'controller', 'Kp', 'yaw']):
@@ -352,7 +395,30 @@ class DLC(object):
 
 
 
-    def analysis(self, mode='fullload', settings=None, PRINT=True):
+    def analysis(self):
+
+        summaryDataFile = Config.manifestpath + self.basename + '_data.csv'
+        columns = ['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy', 'A1p', 'A2p',
+                   'A3p','A4p','shutdown','tcl']
+        # if summary datafile exists, read from it. Else, run analysis and
+        # save a new summary datafile
+        if os.path.isfile(summaryDataFile):
+            filedata = np.loadtxt(summaryDataFile)
+            for seed, line in zip(self.seeds, filedata):
+                seed.data = pd.Series(line, index = columns)
+        else:
+            for seed in self.seeds:
+                print('\r Analysing seed {}/{}'.format(seed.ind, len(self.seeds)), end='')
+                seed.analysis()
+            filedata = np.array([x.data for x in self.seeds])
+            np.savetxt(summaryDataFile, filedata)
+
+
+
+        for sim in self.Sims:
+            sim.analysis()
+
+#                    seed.load(resFolder)
         # perform frequency, equivalent load etc analysis. if mode is 'fullload',
         # all data and analysis data is loaded from file if it exists. otherwise,
         # analysis is performed and saved. if mode is 'lightload', only analysis data
@@ -361,37 +427,36 @@ class DLC(object):
 
         #Get analysis parameters from config file
 
-        resFolder = Config.modelpath + 'res/' + self.basename + '/'
-        for i, seed in enumerate(self.seeds):
-            if PRINT:
-                print('\rAnalysing: {}/{}'.format(i, len(self.seeds)), end='')
-            if mode == 'do':# slow
-                seed.loadFromSel(resFolder, Config.channels)
-                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-            elif mode == 'dosave':# slowest
-                seed.loadFromSel(resFolder, Config.ch)
-                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-                seed.save(resFolder)
-            elif mode == 'fullload':# fast
-                if os.path.isfile(resFolder + seed.filename + '.npz'):
-                    seed.load(resFolder)
-                else:
-                    seed.loadFromSel(resFolder, Config.channels)
-                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-                    seed.save(resFolder)
-            elif mode =='lightload': # fastest
-                if os.path.isfile(resFolder + seed.filename + '.npz'):
-                    seed.load(resFolder, light=True)
-                else:
-                    seed.loadFromSel(resFolder, ch)
-                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-                    seed.save(resFolder)
+#        resFolder = Config.modelpath + 'res/' + self.basename + '/'
+#        for i, seed in enumerate(self.seeds):
+#            if PRINT:
+#                print('\rAnalysing: {}/{}'.format(i, len(self.seeds)), end='')
+#            if mode == 'do':# slow
+#                seed.loadFromSel(resFolder, Config.channels)
+#                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
+#            elif mode == 'dosave':# slowest
+#                seed.loadFromSel(resFolder, Config.ch)
+#                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
+#                seed.save(resFolder)
+#            elif mode == 'fullload':# fast
+#                if os.path.isfile(resFolder + seed.filename + '.npz'):
+#                    seed.load(resFolder)
+#                else:
+#                    seed.loadFromSel(resFolder, Config.channels)
+#                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
+#                    seed.save(resFolder)
+#            elif mode =='lightload': # fastest
+#                if os.path.isfile(resFolder + seed.filename + '.npz'):
+#                    seed.load(resFolder, light=True)
+#                else:
+#                    seed.loadFromSel(resFolder, ch)
+#                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
+#                    seed.save(resFolder)
+#
+#        for sim in self.Sims:
+#            sim.simAnalysis()
 
-        for sim in self.Sims:
-            sim.simAnalysis()
 
-        if PRINT:
-            print()
 
 
     def _mask(self, df, **kwargs):
@@ -424,3 +489,7 @@ class DLC(object):
 
         return list(itertools.product(*uniques))
 
+
+if __name__ is '__main__':
+    dlc_noipc = DLC('dlc11_0')
+    dlc_noipc.analysis()

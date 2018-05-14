@@ -11,7 +11,7 @@ from JaimesThesisModule import PostProc
 def run(dlc, dlc2, dlc_noipc, C, SAVE=False):
     C = 'ipc05'
     C2 = 'ipc_rbm05'
-    keys = ['RBM1', 'RBMe1', 'MBx', 'MBy']
+    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
     titles = ['Flapwise blade RBM', 'Edgewise blade RBM',
               'Main bearing (tilt)', 'Main bearing (yaw)']
     WSP = np.array([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26])
@@ -22,14 +22,14 @@ def run(dlc, dlc2, dlc_noipc, C, SAVE=False):
 
         for i, wsp in enumerate(WSP):
             sim_ref = dlc_noipc(wsp=wsp, yaw=0)[0]
-            Req_ol[i] = float(sim_ref.Req[key])
+            Req_ol[i] = float(sim_ref.data[key])
 
             sim = dlc(wsp=wsp, yaw=0, controller=C)[0]
-            Req_cl[i] = float(sim.Req[key])
+            Req_cl[i] = float(sim.data[key])
 
 
             sim = dlc2(wsp=wsp, yaw=0, controller=C2)[0]
-            Req_RBM[i] = float(sim.Req[key])
+            Req_RBM[i] = float(sim.data[key])
 
        # bar graph
         width = 1.4/3
@@ -54,16 +54,14 @@ def run(dlc, dlc2, dlc_noipc, C, SAVE=False):
 
 
 if __name__ is '__main__':
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()) or ('dlc2' not in locals()):
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
 
-        dlc2 = PostProc.DLC('dlc11_2')
-        dlc2.analysis(mode=mode)
+    dlc2 = PostProc.DLC('dlc11_2')
+    dlc2.analysis()
 
     run(dlc, dlc2, dlc_noipc, 0, SAVE=True)
 
