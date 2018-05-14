@@ -16,24 +16,26 @@ def run(dlc, ref_dlc, c, SAVE=None):
 
     wsp=16; keyroot='TD'; ylabel='Tip Deflection [m]'
     keys = [keyroot + str(x) for x in [1,2,3]]
-
+    channels = {'Azim': 2, 'TD1': 49, 'TD2' : 52, 'TD3': 55}
     # get ref sim data
     ref = ref_dlc(yaw=0, wsp=wsp)[0]
     for i, seed in enumerate(ref):
+        data = seed.loadFromSel(channels)
         if i == 0:
-            refx = seed.Data.Azim
-            refy = seed.Data[keys].as_matrix()
-        refx = np.append(refx, seed.Data.Azim)
-        refy = np.append(refy, seed.Data[keys].as_matrix(), 0)
+            refx = data.Azim
+            refy = data[['TD1', 'TD2', 'TD3']].as_matrix()
+        refx = np.append(refx, data.Azim)
+        refy = np.append(refy, data[['TD1', 'TD2', 'TD3']].as_matrix(), 0)
 
      # get sim data to plot
     sim = dlc(yaw=0, wsp=wsp, controller=c)[0]
     for i, seed in enumerate(sim):
+        data = seed.loadFromSel(channels)
         if i == 0:
-            x = seed.Data.Azim
-            y = seed.Data[keys].as_matrix()
-        x = np.append(x, seed.Data.Azim)
-        y = np.append(y, seed.Data[keys].as_matrix(), 0)
+            x = data.Azim
+            y = data[['TD1', 'TD2', 'TD3']].as_matrix()
+        x = np.append(x, data.Azim)
+        y = np.append(y, data[['TD1', 'TD2', 'TD3']].as_matrix(), 0)
 
     # Set up plot
     fig, ax = plt.subplots(3, 2, sharey=True, figsize=[7, 6])

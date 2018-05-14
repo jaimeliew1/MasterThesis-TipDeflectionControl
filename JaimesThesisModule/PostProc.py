@@ -74,16 +74,10 @@ class Seed(object):
     def loadFromSel(self, channels=None):
         return readHawc2Res(self.resFolder + self.filename, channels=channels)
 
-    def load(self, resFolder, light=False):
-        pass
-
-    def save(self, resFolder):
-        pass
 
     def analysis(self, freqCh=None, fmax=None, wohler=None, nperseg=4096):
         self.data = np.zeros(11)
         Data = self.loadFromSel(Config.channels)
-
 
 
         # Equivalent load analysis.
@@ -222,14 +216,6 @@ class Simulation(object):
 
 
 
-
-    def save(self, resFolder):
-        pass
-
-    def load(self, resFolder, light=False):
-        pass
-
-
     def analysis(self, freqCh=None, fmax=None, wohler=None, nperseg=4096, resfolder=None):
 
 
@@ -252,54 +238,6 @@ class Simulation(object):
 
         self.data = pd.Series(list(self.data.values()),
                               index = self.data.keys())
-
-#        for i, seed in enumerate(self.seeds):
-
-#            seed.analysis(freqCh, fmax, wohler, resfolder=resfolder)
-#
-#            if i == 0:
-#                self.fData =seed.fData/N
-#                self.Req = seed.Req/N
-#                self.shutdown = seed.shutdown/N
-#                self.mean = seed.mean/N
-#                self.std = seed.std/np.sqrt(N) #!!! Double check this
-#                self.max = seed.max
-#                self.min = seed.min
-#                self.pitchtravel = seed.pitchtravel/N
-#            else:
-#                self.fData += seed.fData/N
-#                self.Req += seed.Req/N
-#                self.shutdown += seed.shutdown/N
-#                self.mean += seed.mean/N
-#                self.std = seed.std/np.sqrt(N) #!!! double check this
-#                self.max = np.maximum(self.max, seed.max)
-#                self.min = np.minimum(self.min, seed.min)
-#                self.pitchtravel += seed.pitchtravel/N
-
-#    def simAnalysis(self):
-#        N = len(self.seeds)
-#        for i, seed in enumerate(self.seeds):
-#
-#            if i == 0:
-#                self.fData =seed.fData/N
-#                self.Req = seed.Req/N
-#                self.shutdown = seed.shutdown/N
-#                self.mean = seed.mean/N
-#                self.std = seed.std/np.sqrt(N) #!!! Double check this
-#                self.max = seed.max
-#                self.min = seed.min
-#                self.pitchtravel = seed.pitchtravel/N
-#            else:
-#                self.fData += seed.fData/N
-#                self.Req += seed.Req/N
-#                self.shutdown += seed.shutdown/N
-#                self.mean += seed.mean/N
-#                self.std = seed.std/np.sqrt(N) #!!! double check this
-#                self.max = np.maximum(self.max, seed.max)
-#                self.min = np.minimum(self.min, seed.min)
-#                self.pitchtravel += seed.pitchtravel/N
-
-
 
 
 
@@ -332,10 +270,6 @@ class DLC(object):
             #self.seeds.remove(self.seeds[seed.ind])
             self.seeds.remove(seed)
         self.consolidateSimulations()
-
-    #def __iter__(self):
-        #return iter(self.Sims)#
-
 
 
 
@@ -417,46 +351,6 @@ class DLC(object):
 
         for sim in self.Sims:
             sim.analysis()
-
-#                    seed.load(resFolder)
-        # perform frequency, equivalent load etc analysis. if mode is 'fullload',
-        # all data and analysis data is loaded from file if it exists. otherwise,
-        # analysis is performed and saved. if mode is 'lightload', only analysis data
-        # is loaded. otherwise, analysis is performed and saved. if modeis 'do',
-        # the analysis and loading is done regardless of if files exist.
-
-        #Get analysis parameters from config file
-
-#        resFolder = Config.modelpath + 'res/' + self.basename + '/'
-#        for i, seed in enumerate(self.seeds):
-#            if PRINT:
-#                print('\rAnalysing: {}/{}'.format(i, len(self.seeds)), end='')
-#            if mode == 'do':# slow
-#                seed.loadFromSel(resFolder, Config.channels)
-#                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-#            elif mode == 'dosave':# slowest
-#                seed.loadFromSel(resFolder, Config.ch)
-#                seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-#                seed.save(resFolder)
-#            elif mode == 'fullload':# fast
-#                if os.path.isfile(resFolder + seed.filename + '.npz'):
-#                    seed.load(resFolder)
-#                else:
-#                    seed.loadFromSel(resFolder, Config.channels)
-#                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-#                    seed.save(resFolder)
-#            elif mode =='lightload': # fastest
-#                if os.path.isfile(resFolder + seed.filename + '.npz'):
-#                    seed.load(resFolder, light=True)
-#                else:
-#                    seed.loadFromSel(resFolder, ch)
-#                    seed.analysis(Config.freqCh, Config.fmax, Config.wohler)
-#                    seed.save(resFolder)
-#
-#        for sim in self.Sims:
-#            sim.simAnalysis()
-
-
 
 
     def _mask(self, df, **kwargs):

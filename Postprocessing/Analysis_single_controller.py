@@ -20,12 +20,12 @@ def CompleteDataset(dlc, c):
         return True
 
 
-if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
-    dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc_noipc.analysis(mode='fullload')
 
-    dlc = PostProc.DLC('dlc11_1')
-    dlc.analysis(mode='fullload')
+dlc_noipc = PostProc.DLC('dlc11_0')
+dlc_noipc.analysis()
+
+dlc = PostProc.DLC('dlc11_1')
+dlc.analysis()
 
 
 SAVE = False
@@ -33,7 +33,7 @@ c = 'ipcpi'
 import Controllers.IPC_PI as IPC
 
 
-if any(x.shutdown for x in dlc(controller=c, yaw=0)[0]):
+if any(x.data.shutdown for x in dlc(controller=c, yaw=0)[0]):
     print('Some turbines shutdown')
 else:
     print('No turbines shutdown')

@@ -14,10 +14,12 @@ Fs = 100
 
 def Spectrum(sim):
     Ys = []
+    channels =  {'TD1' : 49, 'TD2' : 52, 'TD3' : 55}
     for seed in sim:
+        data = seed.loadFromSel(channels)
         for blade in [1, 2, 3]:
             key = 'TD{}'.format(blade)
-            f, Py = signal.welch(seed.Data[key], Fs, nperseg=1024*8)
+            f, Py = signal.welch(data[key], Fs, nperseg=1024*8)
             Ys.append(np.sqrt(Fs*Py/60000))
 
     Yave = np.mean(Ys, axis=0)
@@ -54,16 +56,13 @@ def run(dlc, dlc_noipc, c, SAVE=False):
 
 if __name__ is '__main__':
 
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
 
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
-
-    run(dlc, dlc_noipc, 'ipc05', SAVE=False)
+    run(dlc, dlc_noipc, 'ipcpi', SAVE=False)
 
 
 

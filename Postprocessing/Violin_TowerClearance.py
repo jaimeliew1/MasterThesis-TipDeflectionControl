@@ -28,13 +28,15 @@ def lowerPeaks(X):
 
 def run(dlc1, dlc2, labels=['1','2'], SAVE=None):
 
-
+    channels = {'tcl':111}
     x, y, hue = np.array([]), np.array([]), np.array([])
 
     print('Analysing DLC1...')
+
     for sim in dlc1:
         for seed in sim:
-            tcl = lowerPeaks(seed.Data.tcl)
+            data = seed.loadFromSel(channels)
+            tcl = lowerPeaks(data.tcl)
             N = len(tcl)
             x = np.append(x, np.ones(N)*sim.wsp)
             y = np.append(y, tcl)
@@ -44,7 +46,8 @@ def run(dlc1, dlc2, labels=['1','2'], SAVE=None):
     print('Analysing DLC2...')
     for sim in dlc2:
         for seed in sim:
-            tcl = lowerPeaks(seed.Data.tcl)
+            data = seed.loadFromSel(channels)
+            tcl = lowerPeaks(data.tcl)
             N = len(tcl)
             x = np.append(x, np.ones(N)*sim.wsp)
             y = np.append(y, tcl)
@@ -57,7 +60,7 @@ def run(dlc1, dlc2, labels=['1','2'], SAVE=None):
     plt.figure(figsize=[7,5])
     plt.xlabel('Wind Speed [m/s]')
     plt.ylabel('Minimum Tower Clearance [m]')
-    sns.violinplot(x=x, y=y, hue=hue, split=True)
+    sns.violinplot(x=x, y=y, hue=hue, split=True, inner='quartile')
     plt.legend(loc='upper left')
 
 
@@ -70,24 +73,23 @@ def run(dlc1, dlc2, labels=['1','2'], SAVE=None):
 
 
 if __name__ is '__main__':
-    _locals = locals().keys()
-    if not all(x in _locals for x in ['dlc15_0', 'dlc15_1', 'dlc11_0', 'dlc11_1']):
-        dlc15_0 = PostProc.DLC('dlc15_0')
-        dlc15_0.analysis(mode='fullload')
 
-        dlc15_1 = PostProc.DLC('dlc15_1')
-        dlc15_1.analysis(mode='fullload')
+    dlc15_0 = PostProc.DLC('dlc15_0')
+    dlc15_0.analysis()
 
-        dlc11_0 = PostProc.DLC('dlc11_0')
-        dlc11_0.analysis(mode='fullload')
+    dlc15_1 = PostProc.DLC('dlc15_1')
+    dlc15_1.analysis()
 
-        dlc11_1 = PostProc.DLC('dlc11_1')
-        dlc11_1.analysis(mode='fullload')
+    dlc11_0 = PostProc.DLC('dlc11_0')
+    dlc11_0.analysis()
+
+    dlc11_1 = PostProc.DLC('dlc11_1')
+    dlc11_1.analysis()
 
 
 
     x, y, hue = run(dlc15_0, dlc15_1(controller='ipc07'),
-        labels=['no control', 'Tip Disturbance Rejection Control'], SAVE=True)
+        labels=['no control', 'Tip Disturbance Rejection Control'], SAVE=False)
 
     print(min(y[hue=='no control']))
     print(min(y[hue=='Tip Disturbance Rejection Control']))

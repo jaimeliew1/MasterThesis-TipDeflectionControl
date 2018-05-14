@@ -52,23 +52,33 @@ def plot_rate_timeseries(dlc, dlc_noipc, c, wsp=26, save=False):
     plt.show(); print()
 
 
-def plot_histogram(dlc, dlc_noipc, c, wsp=26, save=False):
+def plot_histogram(dataIPC, dataRef, c, wsp=26, save=False):
     # get relevant simuation data
-    sims = dlc(wsp=wsp, yaw=0, controller=c)
-    ref_sims = dlc_noipc(wsp=wsp, yaw=0)
+
     # Pitch rate histogram
     fig, ax = plt.subplots()
     ax.set_xlabel('Blade pitch rate [deg/s]')
     ax.set_ylabel('Frequency')
     ax.set_xlim([-20, 20])
-    ax.set_ylim([0, 8000])
+    ax.set_ylim([0, 80000])
     ax.axvline(-10, lw=1, c='k', ls='--')
     ax.axvline(10, lw=1, c='k', ls='--')
 
 
+    pitchrate = []
+    for data in dataRef:
+        pitchrate += list(data.pitchrate1)
+        pitchrate += list(data.pitchrate2)
+        pitchrate += list(data.pitchrate3)
 
-    ax.hist(sims[0][0].Data.pitchrate1, 30, alpha=0.7, label='With IPC')
-    ax.hist(ref_sims[0][0].Data.pitchrate1, 30, color='k', alpha=0.7, label='No IPC')
+    pitchrateIPC = []
+    for data in dataIPC:
+        pitchrateIPC += list(data.pitchrate1)
+        pitchrateIPC += list(data.pitchrate2)
+        pitchrateIPC += list(data.pitchrate3)
+
+    ax.hist(pitchrateIPC, 30, color='k', alpha=0.7, label='With IPC')
+    ax.hist(pitchrate, 30, alpha=0.7, label='No IPC')
     ax.set_title('wsp={} m/s'.format(wsp))
     ax.legend()
 
@@ -81,20 +91,27 @@ def plot_histogram(dlc, dlc_noipc, c, wsp=26, save=False):
 
 
 def run(dlc, dlc_noipc, c, wsp=26, SAVE=None):
-    plot_histogram(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
-    plot_angle_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
-    plot_rate_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
+    channels = {'pitch1'    :  4,   #pitch angle blade 1 [deg]
+                'pitch2'    :  6,
+                'pitch3'    :  8,
+                'pitchrate1':  5,  # Pitch rate blade 1 [deg/s]
+                'pitchrate2':  7,
+                'pitchrate3':  9}
+
+    dataRef = [seed.loadFromSel(channels) for seed in dlc_noipc(wsp=wsp)[0]]
+    dataIPC = [seed.loadFromSel(channels) for seed in dlc(wsp=wsp,controller=c)[0]]
+    plot_histogram(dataIPC, dataRef, c, wsp=wsp, save=SAVE)
+    #plot_angle_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
+    #plot_rate_timeseries(dlc, dlc_noipc, c, wsp=wsp, save=SAVE)
 
 
 
 if __name__ is '__main__':
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
 
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
 
-    run(dlc, dlc_noipc, 'ipc04', wsp=26, SAVE=True)
+    run(dlc, dlc_noipc, 'ipcpi', wsp=26, SAVE=False)

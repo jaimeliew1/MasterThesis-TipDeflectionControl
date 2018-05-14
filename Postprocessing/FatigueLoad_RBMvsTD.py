@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 def run(dlc, dlc2, dlc_noipc, C, SAVE=False):
-    C = 'ipc05'
-    C2 = 'ipc_rbm05'
+    C = 'ipcpi'
+    C2 = 'ipc_rbmpi'
     keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
     titles = ['Flapwise blade RBM', 'Edgewise blade RBM',
               'Main bearing (tilt)', 'Main bearing (yaw)']

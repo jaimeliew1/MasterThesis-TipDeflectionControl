@@ -22,14 +22,15 @@ def lowerPeaks(X):
     return peaks
 
 def run(*Sims, labels=None, SAVE=None):
-
+    channels = {'tcl':111}
     plt.figure()
     plt.xlabel('Minimum Tower Clearance [m]')
     plt.ylabel('Frequency per 10 minute period')
     for i, sims in enumerate(Sims):
         tcl = []
         for sim in sims:
-            tcl += lowerPeaks(sim.Data.tcl)
+            data = sim.loadFromSel(channels)
+            tcl += lowerPeaks(data.tcl)
 
         if labels:
             label = labels[i]
@@ -47,24 +48,22 @@ def run(*Sims, labels=None, SAVE=None):
 
 
 if __name__ is '__main__':
-    _locals = locals().keys()
-    if not all(x in _locals for x in ['dlc15_0', 'dlc15_1', 'dlc11_0', 'dlc11_1']):
-        dlc15_0 = PostProc.DLC('dlc15_0')
-        dlc15_0.analysis(mode='fullload')
+    dlc11_0 = PostProc.DLC('dlc11_0')
+    dlc11_0.analysis()
 
-        dlc15_1 = PostProc.DLC('dlc15_1')
-        dlc15_1.analysis(mode='fullload')
+    dlc11_1 = PostProc.DLC('dlc11_1')
+    dlc11_1.analysis()
 
-        dlc11_0 = PostProc.DLC('dlc11_0')
-        dlc11_0.analysis(mode='fullload')
+    dlc15_0 = PostProc.DLC('dlc15_0')
+    dlc15_0.analysis()
 
-        dlc11_1 = PostProc.DLC('dlc11_1')
-        dlc11_1.analysis(mode='fullload')
+    dlc15_1 = PostProc.DLC('dlc15_1')
+    dlc15_1.analysis()
 
 
 
     run(dlc15_0(wsp=12)[0], dlc15_1(controller='ipc07', wsp=12)[0],
-        labels=['no control', 'TDR'], SAVE=True)
+        labels=['no control', 'TDR'], SAVE=False)
 
     run(dlc11_0(wsp=14)[0], dlc11_1(controller='ipc07', wsp=12)[0],
-        labels=['no control', 'TDR'], SAVE=True)
+        labels=['no control', 'TDR'], SAVE=False)

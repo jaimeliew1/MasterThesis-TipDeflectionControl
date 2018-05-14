@@ -18,19 +18,21 @@ Fs = 1/0.01
 
 
 
+
 def Spectrum(sim):
     Ys = []
+    channels =  {'TD1' : 49, 'TD2' : 52, 'TD3' : 55}
     for seed in sim:
+        data = seed.loadFromSel(channels)
         for blade in [1, 2, 3]:
             key = 'TD{}'.format(blade)
-            f, Py = signal.welch(seed.Data[key], Fs, nperseg=1024*8)
+            f, Py = signal.welch(data[key], Fs, nperseg=1024*8)
             Ys.append(np.sqrt(Fs*Py/60000))
 
     Yave = np.mean(Ys, axis=0)
     Yol = interpolate.interp1d(f, Yave, kind='linear', bounds_error=False)
 
     return Yol
-
 
 def magplotSetup(xlim = [0.01, 1.5], F1p=None):
     fig, axes = plt.subplots()
@@ -89,16 +91,15 @@ def run(dlc, dlc_noipc, c, C, SAVE=False):
 
 
 if __name__ is '__main__':
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
 
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc_noipc.analysis()
 
-    from Controllers.IPC_PI import make
-    c = 'ipcpi'
+    dlc = PostProc.DLC('dlc11_1')
+    dlc.analysis()
+
+    from Controllers.IPC07 import make
+    c = 'ipc07'
     run(dlc, dlc_noipc, c, make(), SAVE=False)
 
 

@@ -21,9 +21,9 @@ def plotRotorFreq(nP=1, ax=None):
     if ax is None:
         ax = plt.gca()
     for n in range(nP):
-        ax.plot(opData[:,0], (n+1) * opData[:,1], '--', color='0.9', lw=0.5)
+        ax.plot(opData[:,0], (n+1) * opData[:,1], '--', color='k', lw=0.5)
         caption = '$f_{' + str(n+1) + 'P}$'
-        ax.text(11, 0.01 + F1p*(n+1), caption, color='0.9')
+        ax.text(11, 0.01 + F1p*(n+1), caption, color='k')
 
 def plotShutdown(sims, ax=None):
     if ax is None:
@@ -49,7 +49,7 @@ def SpectralContour3(X, Y, Z, ax=None):
     norm = colors.Normalize(vmin=-zmax, vmax=zmax,clip=True)
     levels = np.linspace(-zmax, zmax, 21)
     CP = ax.contourf(X, Y, Z, levels,
-                     norm=norm, cmap='viridis')
+                     norm=norm, cmap='RdYlBu_r')
     ax.contour(X, Y, Z, levels, colors='k', linewidths=0.1)
 
     CB = plt.colorbar(CP)
