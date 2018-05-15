@@ -29,7 +29,7 @@ data = readHawc2Res('C:/Dropbox/Uni/Masters/4 Thesis/HAWC2-Python-Simulation/DTU
 
 data2 = readHawc2Res('C:/Dropbox/Uni/Masters/4 Thesis/HAWC2-Python-Simulation/DTU10MW_Turbine/res/template/tracking_0',  channels)
 
-data3 = readHawc2Res('C:/Dropbox/Uni/Masters/4 Thesis/HAWC2-Python-Simulation/DTU10MW_Turbine/res/template/tracking_1',  channels)
+data3 = readHawc2Res('C:/Dropbox/Uni/Masters/4 Thesis/HAWC2-Python-Simulation/DTU10MW_Turbine/res/template/tracking_3',  channels)
 
 # load tip deflection time series from each sim and subtract mean
 td = data[['TD1', 'TD2','TD3']].as_matrix()
@@ -55,3 +55,23 @@ ref = 0
 print(min(data.TowerTip) - ref)
 print(min(data2.TowerTip) - ref)
 print(min(data3.TowerTip) - ref)
+
+
+def lowerPeaks(X):
+    peaks = []
+    for i, x in enumerate(X):
+        if i == 0 or i == len(X)-1:
+            continue
+
+        if (X[i-1] > x) and (X[i+1] > x):
+            peaks.append(x)
+    return peaks
+
+fig, ax = plt.subplots(3,1, sharex=True, figsize=[6, 6])
+plt.subplots_adjust(hspace=0.1)
+ax[0].hist(lowerPeaks(data.TowerTip), alpha=0.8, label='no control')
+ax[1].hist(lowerPeaks(data2.TowerTip), alpha=0.8, label='disturbance rejection')
+ax[2].hist(lowerPeaks(data3.TowerTip), alpha=0.8, label='disturbance rejection + tip tracking')
+[a.legend() for a in ax]
+ax[2].set_xlabel('Minimum Tower Clearance')
+ax[2].set_xlim(2, 11)
