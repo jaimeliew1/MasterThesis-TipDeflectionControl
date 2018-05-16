@@ -150,7 +150,10 @@ class Seed(object):
             if (Data.tcl[i-1] > x) and (Data.tcl[i+1] > x):
                 peaks.append(x)
 
-        self.data[10] = min(peaks)
+        if self.data[9] == 1: # if shutdown
+            self.data[10] = -1
+        else:
+            self.data[10] = min(peaks)
 
 
         columns = ['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy', 'A1p', 'A2p',
@@ -236,8 +239,15 @@ class Simulation(object):
 
         self.data['tcl'] = min(seed.data['tcl'] for seed in self.seeds)
 
+        # if any seeds shutdown, then set all summary data values to zero
+        if any(x.data.shutdown for x in self.seeds):
+            for key in self.data.keys():
+                self.data[key] = 0
+
+
         self.data = pd.Series(list(self.data.values()),
                               index = self.data.keys())
+
 
 
 
