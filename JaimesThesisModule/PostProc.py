@@ -29,7 +29,7 @@ from JaimesThesisModule.Misc import readHawc2Res, EquivalentLoad
 from scipy import signal, interpolate
 import matplotlib.pyplot as plt
 
-
+a = None
 
 # TODO Implement Configuration.Config more neatly through out post processing
 
@@ -46,6 +46,12 @@ class Seed(object):
             self.Kp = df.Kp
             self.seed = df.seed
             self.yaw = df.yaw
+            a = df.index
+            if '_amp' in df.index:
+
+                self._amp = df['_amp']
+                self.amp = self._amp
+
         else:
             self.filename = None
             self.wsp = None
@@ -178,11 +184,15 @@ class Simulation(object):
             self.controller = df.controller
             self.Kp = df.Kp
             self.yaw = df.yaw
+
+            if '_amp' in df.index:
+                self.amp = df._amp
         else:
             self.wsp = None
             self.controller = None
             self.Kp = None
             self.yaw = None
+            self.amp = None
         self.seeds = []
 
 
@@ -277,9 +287,15 @@ class DLC(object):
 
         for seed in self.missingResults():
             print('{} is missing.'.format(seed))
-            #self.seeds.remove(self.seeds[seed.ind])
             self.seeds.remove(seed)
-        self.consolidateSimulations()
+
+
+
+        if basename == 'dlc11_3':
+            self.consolidateSimulations(unique=['wsp', 'controller', '_amp', 'Kp', 'yaw'])
+        else:
+            self.consolidateSimulations()
+        self.analysis()
 
 
 
@@ -309,19 +325,6 @@ class DLC(object):
             if not os.path.isfile(resfolder + seed.filename + '.sel'):
                 missingSeeds.append(seed)
         return missingSeeds
-
-
-
-
-    def loadResults(self, ch=None):
-        resfolder = Config.modelpath + 'res/' + self.basename + '/'
-
-        if ch is None:
-            print('This needs to be done') #TODO
-        if ch is not None:
-            for sim in self.Sims:
-                sim.loadFromSel(resfolder, ch)
-
 
 
 
@@ -395,5 +398,5 @@ class DLC(object):
 
 
 if __name__ is '__main__':
-    dlc_noipc = DLC('dlc11_0')
-    dlc_noipc.analysis()
+    dlc_noipc = DLC('dlc11_3')
+

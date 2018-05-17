@@ -63,21 +63,6 @@ def readHawc2Res(filename,channels=None):
     return pd.DataFrame(data)
 
 
-def FilterToHTC(B,A,filename):
-    assert len(B) == len(A)
-    N = len(B)
-    with open(filename,'w') as f:
-        f.write('\t\tconstant 1       {:<25} ; N  Length of filter\n'.format(N))
-        #f.write('\t\tconstant 2       {:<25} ; Kp Gain of controller [rad/m]\n'.format(k))
-
-        f.write('\t\t; Feed-Forward Coefficients\n')
-        for i in range(N):
-            f.write('\t\tconstant {:<4}    {:<25} ; b{}\n'.format(3+i,B[i],i))
-
-        f.write('\t\t; Feed-Backward Coefficients\n')
-        for i in range(N):
-            f.write('\t\tconstant {:<4}    {:<25} ; a{}\n'.format(N+3+i,A[i],i))
-
 
 
 def bodePlot(title='',F1p=None):

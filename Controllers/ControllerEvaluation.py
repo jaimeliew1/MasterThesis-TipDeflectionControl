@@ -15,7 +15,7 @@ from JaimesThesisModule import ControlDesign
 #plt.rc('text', usetex=False)
 F1p = [0.099, 0.1, 0.105, 0.14, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16]
 
-from IPC07 import make
+from IPC_PI import make
 #SAVE = 'ipc09'
 SAVE=None
 

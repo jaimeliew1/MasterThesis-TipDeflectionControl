@@ -50,10 +50,7 @@ def run(dlc, dlc_noipc, C, SAVE=False):
 if __name__ is '__main__':
 
     dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc_noipc.analysis()
-
     dlc = PostProc.DLC('dlc11_1')
-    dlc.analysis()
 
     run(dlc, dlc_noipc, 0, SAVE=False)
 
