@@ -68,8 +68,13 @@ for a in [1, 2, 3]:
 #%% Plot the statistical data.
 
 def TTTplot(ax, X, Y):
-    extent = [0, 360, -10, 10]
-    hexbinConfig = {'gridsize':30, 'extent':extent, 'linewidths':1, 'mincnt':1}
+
+    hexbinConfig = {'gridsize':30,
+                    'extent':[0, 360, -10, 10],
+                    'linewidths':1,
+                    'mincnt':1,
+                    'vmin':0,
+                    'vmax':1300}
     ax.set_ylim(-10, 10)
     hist = binCyclicalData(X, Y)
     bins = list(hist.keys())
@@ -77,8 +82,8 @@ def TTTplot(ax, X, Y):
     Min = [np.min(v) for v in hist.values()]
 
     Hexplot = ax.hexbin(X, Y, cmap='Blues', **hexbinConfig)
-    ax.plot(bins, Max, '--k')
-    ax.plot(bins, Min, '--k')
+    ax.plot(bins, Max, '--k', lw=1)
+    ax.plot(bins, Min, '--k', lw=1)
     ax.set_xticks(range(0, 361, 90))
     ax.set_yticks(range(-8, 9, 4))
     ax.grid()
@@ -101,8 +106,11 @@ for i, ax in enumerate(axes):
 fig.text(0.04, 0.5, 'Flapwise Tip Deflection (blade FOR) [m]', va='center', rotation='vertical')
 axes[-1].set_xlabel('Azimuth Angle [deg]')
 # color bar
+N = len(X[0])
 cb = fig.colorbar(hexPlot, ax=axes.ravel().tolist())
-cb.set_label('Number of Occurences')
+cb.set_ticks(np.linspace(0, 1300, 6)) #based on vmin and vmax
+cb.set_ticklabels(['{:1.2f}%'.format(x*100) for x in np.linspace(0/N, 1300/N, 6)])
+cb.set_label('Probability of Occurences')
 plt.show(); print()
 
 
