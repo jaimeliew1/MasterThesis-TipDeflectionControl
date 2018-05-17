@@ -70,8 +70,7 @@ def run(dlc, dlc2, wsp=18, c='ipc04', maxAmp=3, SAVE=False):
 
 
     if SAVE:
-        pass
-        #plt.savefig('../Figures/{}/.png', dpi=200)
+        plt.savefig(SAVE, dpi=300, bbox_inches='tight')
     plt.show(); print()
 
 
@@ -83,12 +82,7 @@ if __name__ is '__main__':
     dlc2 = PostProc.DLC('dlc11_3')
 
 
-    run(dlc, dlc2, wsp=18, c='ipc04', maxAmp=4, SAVE=False)
-
-
-
-#%%
-
+    run(dlc, dlc2, wsp=18, c='ipc04', maxAmp=4, SAVE='../Figures/TTT_hist.png')
 
 
 
