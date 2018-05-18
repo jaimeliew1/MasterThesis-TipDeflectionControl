@@ -22,6 +22,56 @@ SAVE=None
 
 f = np.linspace(0, 1.5, 1000)[1:]
 
+def Margins(L, N=1000, fmax=1.5):
+    # returns the gain margins (the gain [dB] when the phase crosses 180deg)
+    # and the phase response [deg] when the gain crosses 0dB. Both in
+    # dictionaries. Searches between f=0 to fmax Hz over N steps. Once a
+    # crossover is found, a refined search is performed by dividing the
+    # step into another N steps and finding the crossover. Therefore the
+    # max error in the crossover frequencies is e > fmax/N**2 Hz
+    f = np.linspace(0, fmax, N+1)[1:]
+    _, mag, phase = signal.bode(L, w=f*2*np.pi)
+
+    ##### Find phase margins ####
+
+    # sweep find gain crossovers
+    gainCross = []
+    for i in range(N-1):
+        if mag[i]*mag[i+1] < 0:
+            # refine search
+            f_ = np.linspace(f[i], f[i+1], N)
+            _, mag_, _ = signal.bode(L, w=f_*2*np.pi)
+            for j in range(N-1):
+                if mag_[j]*mag_[j+1] < 0:
+                    gainCross.append(f_[j])
+                    break
+
+    # calculate phase response at gain crossover frequencies
+    pm = signal.bode(L, w=2*np.pi*np.array(gainCross))[2]
+    pm = dict(zip(gainCross, pm))
+
+
+    ###### Find Gain Margins #######
+    # find phase crossover frequencies
+    phaseCross = []
+    for i in range(N-1):
+        if (phase[i]+180)//360 != (phase[i+1]+180)//360:
+            # refine search
+            f_ = np.linspace(f[i], f[i+1], N)
+            _, _, phase_ = signal.bode(L, w=f_*2*np.pi)
+            for j in range(N-1):
+                if (phase_[j]+180)//360 != (phase_[j+1]+180)//360:
+                    phaseCross.append(f_[j])
+                    break
+
+    # calculate gain margin from phase crossover
+    gm = signal.bode(L, w=2*np.pi*np.array(phaseCross))[1]
+    gm = dict(zip(phaseCross, gm))
+
+    return gm, pm
+
+
+
 
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
@@ -180,20 +230,26 @@ def plot_Yol_Ycl(Yol, S, save=False):
     plt.show(); print()
 
 
-def plot_L(L, save=False):
+def plot_L(L, margins=False, save=False):
     # Calculate gain and phase response.
     _, mag, phase = signal.bode(L, w=f*2*np.pi)
     phase = (phase+180) % 360 - 180
-
-
     fig, ax = bodeSetup(F1p=0.16)
 
     ax[0].plot(f, mag, label='PC')
-
-
     ax[1].plot(f, phase)
     ax[0].legend()
 
+    if margins:
+        gm, pm = Margins(L)
+
+        for freq, g in gm.items():
+            ax[0].plot([freq]*2, [0, g], 'r', lw=0.5)
+        for freq, p in pm.items():
+            if p < 0:
+                ax[1].plot([freq]*2, [-180, p], 'r', lw=0.5)
+            if p >= 0:
+                ax[1].plot([freq]*2, [180, p], 'r', lw=0.5)
     ## TODO, show gain and phase margins
     if save:
         plt.savefig('../Figures/{}/{}_L.png'.format(save, save), dpi=200)
@@ -259,7 +315,7 @@ if __name__ == '__main__':
     plot_Yol_Ycl(Yol, S, save=SAVE)
 
     # Plot Controller Robust Stability
-    plot_L(L, save=SAVE)
+    plot_L(L, margins=True, save=SAVE)
     sm = plot_nyquist(L, zoom=1.5, save=SAVE)
 
     # determine tip trajectory tracking precompensator paramams
