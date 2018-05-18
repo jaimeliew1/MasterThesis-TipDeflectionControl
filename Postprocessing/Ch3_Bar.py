@@ -5,23 +5,6 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 def run(dlc_noipc, dlc, dlc2, SAVE=False):
-
-    if SAVE:
-        pass
-        #plt.savefig('../Figures/{}/.png', dpi=200)
-
-
-
-
-
-if __name__ is '__main__':
-
-    dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc = PostProc.DLC('dlc11_1')
-    dlc2 = PostProc.DLC('dlc11_3')
-
-    run(dlc_noipc, dlc, dlc2, SAVE=False)
-
     c = 'ipc07'
     key = 'RBMf'
     amps = [1, 2, 3, 4]
@@ -53,6 +36,24 @@ if __name__ is '__main__':
     ax.legend()
 
     plt.show(); print()
+
+    if SAVE:
+        plt.savefig(SAVE, dpi=200, bbox_inches='tight')
+
+
+
+
+
+
+if __name__ is '__main__':
+
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc = PostProc.DLC('dlc11_1')
+    dlc2 = PostProc.DLC('dlc11_3')
+
+    run(dlc_noipc, dlc, dlc2, SAVE=False)
+
+
 
 
 

@@ -23,7 +23,7 @@ def lowerPeaks(X):
 
 
 
-def run(dlc, dlc2, wsp=18, c='ipc04', maxAmp=3, SAVE=False):
+def run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc04', maxAmp=3, SAVE=False):
     #%% Load data into list of x
     X = []
 
@@ -82,7 +82,7 @@ if __name__ is '__main__':
     dlc2 = PostProc.DLC('dlc11_3')
 
 
-    run(dlc, dlc2, wsp=18, c='ipc04', maxAmp=4, SAVE='../Figures/TTT_hist.png')
+    run(_, dlc, dlc2, wsp=18, c='ipc04', maxAmp=4, SAVE=False)
 
 
 
