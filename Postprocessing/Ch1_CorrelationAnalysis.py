@@ -48,7 +48,8 @@ def run(dlc_noipc, SAVE=None):
                         'vmax':5400,
                         'extent': [-15000, 15000, -8, 8],
                         'cmap':'Blues'}
-
+        if SAVE:
+            hexbinConfig['linewidths'] = 0.25
         coeffs = np.polyfit(X, Y, 1)
         corr = np.corrcoef(X, Y)[0,1]
         xline = np.linspace(-15000, 15000)
@@ -91,7 +92,7 @@ def run(dlc_noipc, SAVE=None):
     cb.set_label('Probability of Occurences')
 
     if SAVE:
-        plt.savefig('../Figures/RBM_TD_Correlation.png', dpi=200, bbox_inches='tight')
+        plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
 
 if __name__ is '__main__':

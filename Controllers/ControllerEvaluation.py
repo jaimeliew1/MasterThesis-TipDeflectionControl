@@ -14,7 +14,7 @@ from JaimesThesisModule import ControlDesign
 
 #plt.rc('text', usetex=False)
 
-from IPC07 import make
+#from IPC07 import make
 #SAVE = 'ipc09'
 SAVE=None
 
@@ -172,7 +172,7 @@ def plot_C(C, save=False):
     plt.show(); print()
 
 
-def plot_S(S, save=False):
+def plot_S(S, save=False, ylim=None):
     # Calculate gain and phase response.
     _, mag, _ = signal.bode(S, w=f*(2*np.pi))
 
@@ -184,7 +184,8 @@ def plot_S(S, save=False):
     verts = [(0, 0)] + list(zip(list(f), list(mag))) + [(f.max(), 0)]
     poly = Polygon(verts, facecolor='0.9', edgecolor='0.5')
     ax.add_patch(poly)
-
+    if ylim:
+        ax.set_ylim(ylim)
 
     ax.legend()
 
@@ -271,7 +272,6 @@ def plot_L(L, margins=False, save=False):
     return ax
 
 def plot_nyquist(L, zoom=None, margin=False, save=False):
-    fig, axes = plt.subplots(figsize=[5, 5])
 
     nyquistSetup(axes, zoom=zoom)
     #axes[1].yaxis.tick_right(); axes[1].set_ylabel('')

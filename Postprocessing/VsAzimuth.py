@@ -77,13 +77,8 @@ def run(dlc, ref_dlc, c, SAVE=None):
 
 
 if __name__ is '__main__':
-    if ('dlc_noipc' not in locals()) or ('dlc' not in locals()):
+    dlc_noipc = PostProc.DLC('dlc11_0')
+    dlc = PostProc.DLC('dlc11_1')
 
-        mode = 'fullload'
-        dlc_noipc = PostProc.DLC('dlc11_0')
-        dlc_noipc.analysis(mode=mode)
-
-        dlc = PostProc.DLC('dlc11_1')
-        dlc.analysis(mode=mode)
 
     run(dlc, dlc_noipc, 'ipc04', SAVE=False)
