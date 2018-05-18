@@ -13,9 +13,8 @@ from Modelling import BladeModel, OLResponse
 from JaimesThesisModule import ControlDesign
 
 #plt.rc('text', usetex=False)
-F1p = [0.099, 0.1, 0.105, 0.14, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16]
 
-from IPC_PI import make
+from IPC07 import make
 #SAVE = 'ipc09'
 SAVE=None
 
@@ -48,6 +47,7 @@ def Margins(L, N=1000, fmax=1.5):
 
     # calculate phase response at gain crossover frequencies
     pm = signal.bode(L, w=2*np.pi*np.array(gainCross))[2]
+    pm = (pm + 180)%360 - 180
     pm = dict(zip(gainCross, pm))
 
 
@@ -88,13 +88,14 @@ def bodeSetup(xlim = [0.01, 1.5], F1p=None):
     axes[1].set_yticks(np.arange(-180, 180, 60))
     axes[0].set_xscale('log')
 
-    # draw f_np lines
-    if F1p is not None:
-        for i in [1, 2, 3, 4]:
-            axes[0].axvline(F1p*i, linestyle='--',color='k', lw=1)
-            axes[1].axvline(F1p*i, linestyle='--',color='k', lw=1)
 
-    axes[0].axhline(0, linestyle='--',color='0.7', lw=1)
+    axes[1].set_xticks([F1p, 2*F1p, 3*F1p, 4*F1p], minor=True)
+    axes[1].set_xticklabels(['$f_{1p}$', '$f_{2p}$', '$f_{3p}$', '$f_{4p}$'], minor=True)
+    axes[0].set_xticklabels([], minor=True)
+    axes[1].grid(which='minor')
+    axes[0].grid(which='minor')
+
+    axes[0].axhline(0, linestyle='-',color='0.7', lw=1)
     return fig, axes
 
 
@@ -107,12 +108,13 @@ def magplotSetup(xlim = [0.01, 1.5], F1p=None):
     axes.set_xlim([0.01, xlim[1]])
     axes.set_xscale('log')
 
-    # draw f_np lines
-    if F1p is not None:
-        for i in [1, 2, 3, 4]:
-            axes.axvline(F1p*i, linestyle='--',color='k', lw=1)
+    axes.set_xticks([F1p, 2*F1p, 3*F1p, 4*F1p], minor=True)
+    axes.set_xticklabels(['$f_{1p}$', '$f_{2p}$', '$f_{3p}$', '$f_{4p}$'], minor=True)
+    axes.grid(which='minor')
 
     return fig, axes
+
+
 
 
 def nyquistSetup(ax, zoom=None):
@@ -128,6 +130,9 @@ def nyquistSetup(ax, zoom=None):
     if zoom:
         ax.set_xlim([-zoom, zoom])
         ax.set_ylim([-zoom, zoom])
+
+
+
 
 ################ Control Performance Plots
 def plot_Pol_Pcl(P, P_CL, save=False):
@@ -148,7 +153,7 @@ def plot_Pol_Pcl(P, P_CL, save=False):
     ax[0].legend(loc='lower left')
 
     if save:
-        plt.savefig('../Figures/{}/{}_OL_CL_bode.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
 
 
@@ -163,7 +168,7 @@ def plot_C(C, save=False):
     ax.legend()
 
     if save:
-        plt.savefig('../Figures/{}/{}_C.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
 
 
@@ -184,7 +189,7 @@ def plot_S(S, save=False):
     ax.legend()
 
     if save:
-        plt.savefig('../Figures/{}/{}_S.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
 
 
@@ -209,7 +214,7 @@ def plot_T(T, save=False):
 #    ax.add_patch(poly)
 
     if save:
-        plt.savefig('../Figures/{}/{}_T.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
 
 
@@ -226,7 +231,7 @@ def plot_Yol_Ycl(Yol, S, save=False):
     ax.legend()
 
     if save:
-        plt.savefig('../Figures/{}/{}_Yol_Ycl.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
 
 
@@ -236,55 +241,61 @@ def plot_L(L, margins=False, save=False):
     phase = (phase+180) % 360 - 180
     fig, ax = bodeSetup(F1p=0.16)
 
-    ax[0].plot(f, mag, label='PC')
-    ax[1].plot(f, phase)
-    ax[0].legend()
+    ax[0].plot(f, mag)
+    ax[1].plot(f, phase, label='Loop Transfer Function')
+
 
     if margins:
         gm, pm = Margins(L)
 
         for freq, g in gm.items():
-            ax[0].plot([freq]*2, [0, g], 'r', lw=0.5)
+            ax[0].plot([freq]*2, [0, g], '--r', lw=1)
+            ax[0].text(freq, g, '${:2.2f}dB$'.format(abs(g)), rotation=-90, fontsize=10, va='bottom')
+
+
         for freq, p in pm.items():
             if p < 0:
-                ax[1].plot([freq]*2, [-180, p], 'r', lw=0.5)
+                ax[1].plot([freq]*2, [-180, p], '--r', lw=1)
+                ax[1].text(freq, p-10, '${:2.0f}^o$'.format(p+180), rotation=-90, fontsize=10, va='top')
             if p >= 0:
-                ax[1].plot([freq]*2, [180, p], 'r', lw=0.5)
-    ## TODO, show gain and phase margins
+                ax[1].plot([freq]*2, [180, p], '--r', lw=1)
+                ax[1].text(freq, p+10, '${:2.0f}^o$'.format(180-p), rotation=-90, fontsize=10, va='bottom')
+
+
+    ax[1].legend(['Loop Transfer Function', 'Gain/Phase Margins'])
+
     if save:
-        plt.savefig('../Figures/{}/{}_L.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200, bbox_inches='tight')
 
     plt.show(); print()
+    return ax
 
+def plot_nyquist(L, zoom=None, margin=False, save=False):
+    fig, axes = plt.subplots(figsize=[5, 5])
 
-def plot_nyquist(L, zoom=1.5, save=False):
-    fig, axes = plt.subplots(1, 2)
-    plt.subplots_adjust(wspace=0.1)
-    nyquistSetup(axes[0])
-    nyquistSetup(axes[1], zoom=zoom)
-    axes[1].yaxis.tick_right(); axes[1].set_ylabel('')
+    nyquistSetup(axes, zoom=zoom)
+    #axes[1].yaxis.tick_right(); axes[1].set_ylabel('')
 
 
     w_ = np.linspace(0, 1.5, 10**4)*2*np.pi
     w_ = np.append(w_[1:], [100])
     _, H = signal.freqresp(L, w=w_)
-    axes[0].plot(H.real, H.imag, 'k', lw=1)
-    axes[0].plot(H.real, -H.imag, '--k', lw=1)
 
-    axes[1].plot(H.real, H.imag, 'k', lw=1)
-    axes[1].plot(H.real, -H.imag, '--k', lw=1)
+    axes.plot(H.real, H.imag, 'k', lw=1, label='Nyquist Plot')
+    axes.plot(H.real, -H.imag, '--k', lw=1)
 
     # plot stability margin
     sm, H_ = ControlDesign._stabilityMargin(w_, H)
-    axes[1].plot([-1, H_.real], [0, H_.imag], '--r', lw=0.5)
+    axes.plot([-1, H_.real], [0, H_.imag], '--r', lw=1, label='Stability Margin, $s_m$')
+
+    angle = np.rad2deg(np.arctan(H_.imag/(H_.real + 1)))
+    axes.text(-0.5 + H_.real/2, H_.imag/2, '${:2.2f}$'.format(sm), rotation=angle, ha='center', va='bottom')
+    axes.legend(loc='lower left')
 
     if save:
-        plt.savefig('../Figures/{}/{}_nyquist.png'.format(save, save), dpi=200)
+        plt.savefig(save, dpi=200)
     plt.show(); print()
     return sm
-
-
-
 
 
 
@@ -315,7 +326,8 @@ if __name__ == '__main__':
     plot_Yol_Ycl(Yol, S, save=SAVE)
 
     # Plot Controller Robust Stability
-    plot_L(L, margins=True, save=SAVE)
+
+    ax = plot_L(L, margins=True, save=SAVE)
     sm = plot_nyquist(L, zoom=1.5, save=SAVE)
 
     # determine tip trajectory tracking precompensator paramams
