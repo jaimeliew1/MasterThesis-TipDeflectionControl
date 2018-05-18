@@ -41,6 +41,84 @@ def bodeSetup(xlim = [0.01, 1.5], F1p=None):
 
 
 
+def plot_L(L, margins=False, save=False):
+    # Calculate gain and phase response.
+    _, mag, phase = signal.bode(L, w=f*2*np.pi)
+    phase = (phase+180) % 360 - 180
+    fig, ax = bodeSetup(F1p=0.16)
+
+    ax[0].plot(f, mag, label='PC')
+    ax[1].plot(f, phase)
+    ax[0].legend()
+
+    if margins:
+        gm, pm = Margins(L)
+
+        for freq, g in gm.items():
+            ax[0].plot([freq]*2, [0, g], 'r', lw=0.5)
+        for freq, p in pm.items():
+            if p < 0:
+                ax[1].plot([freq]*2, [-180, p], 'r', lw=0.5)
+            if p >= 0:
+                ax[1].plot([freq]*2, [180, p], 'r', lw=0.5)
+    ## TODO, show gain and phase margins
+    if save:
+        plt.savefig('../Figures/{}/{}_L.png'.format(save, save), dpi=200)
+
+    plt.show(); print()
+
+
+
+
+def Margins(L, N=1000, fmax=1.5):
+    # returns the gain margins (the gain [dB] when the phase crosses 180deg)
+    # and the phase response [deg] when the gain crosses 0dB. Both in
+    # dictionaries. Searches between f=0 to fmax Hz over N steps. Once a
+    # crossover is found, a refined search is performed by dividing the
+    # step into another N steps and finding the crossover. Therefore the
+    # max error in the crossover frequencies is e > fmax/N**2 Hz
+    f = np.linspace(0, fmax, N+1)[1:]
+    _, mag, phase = signal.bode(L, w=f*2*np.pi)
+
+    ##### Find phase margins ####
+
+    # sweep find gain crossovers
+    gainCross = []
+    for i in range(N-1):
+        if mag[i]*mag[i+1] < 0:
+            # refine search
+            f_ = np.linspace(f[i], f[i+1], N)
+            _, mag_, _ = signal.bode(L, w=f_*2*np.pi)
+            for j in range(N-1):
+                if mag_[j]*mag_[j+1] < 0:
+                    gainCross.append(f_[j])
+                    break
+
+    # calculate phase response at gain crossover frequencies
+    pm = signal.bode(L, w=2*np.pi*np.array(gainCross))[2]
+    pm = dict(zip(gainCross, pm))
+
+
+    ###### Find Gain Margins #######
+    # find phase crossover frequencies
+    phaseCross = []
+    for i in range(N-1):
+        if (phase[i]+180)//360 != (phase[i+1]+180)//360:
+            # refine search
+            f_ = np.linspace(f[i], f[i+1], N)
+            _, _, phase_ = signal.bode(L, w=f_*2*np.pi)
+            for j in range(N-1):
+                if (phase_[j]+180)//360 != (phase_[j+1]+180)//360:
+                    phaseCross.append(f_[j])
+                    break
+
+    # calculate gain margin from phase crossover
+    gm = signal.bode(L, w=2*np.pi*np.array(phaseCross))[1]
+    gm = dict(zip(phaseCross, gm))
+
+    return gm, pm
+
+
 
 if __name__ is '__main__':
 
@@ -56,60 +134,9 @@ if __name__ is '__main__':
 
     # transfer function to find stability margins
     L = sys.L
-    _, mag, phase = signal.bode(L, w=f*2*np.pi)
 
 
+    gm, pm = Margins(L)
 
-
-    # sweep find gain crossovers
-    N = len(f)
-    gainCross = []
-    for i in range(N-1):
-        if mag[i]*mag[i+1] < 0:
-            # refine search
-            fsmall = np.linspace(f[i], f[i+1], 100)
-            _, magsmall, _ = signal.bode(L, w=fsmall*2*np.pi)
-            for j in range(99):
-                if magsmall[j]*magsmall[j+1] < 0:
-                    gainCross.append(fsmall[j])
-                    break
-
-    # find phase crossover frequencies
-    phaseCross = []
-    for i in range(N-1):
-        if (phase[i]+180)//360 != (phase[i+1]+180)//360:
-            # refine search
-            fsmall = np.linspace(f[i], f[i+1], 100)
-            _, _, phase_ = signal.bode(L, w=fsmall*2*np.pi)
-            for j in range(99):
-                if (phase_[j]+180)//360 != (phase_[j+1]+180)//360:
-                    phaseCross.append(fsmall[j])
-                    break
-
-    # calculate phase margin from gain crossover
-    pm = signal.bode(L, w=2*np.pi*np.array(gainCross))[2]
-    pm = dict(zip(gainCross, pm))
-
-    # calculate gain margin from phase crossover
-    gm = signal.bode(L, w=2*np.pi*np.array(phaseCross))[1]
-    gm = dict(zip(phaseCross, gm))
-
-    print(pm, gm)
-    phase = ((phase+180)%360 -180)
-    #fig, ax = bodeSetup(F1p=0.16, xlim=[0.1246, 0.12612])
-    #ax[0].set_ylim(-1, 1)
-    fig, ax = bodeSetup(F1p=0.16)
-    ax[0].plot(f, mag, label='PC')
-    #ax[0].plot(gainCross, [0]*len(gainCross), 'xr')
-    for freq, g in gm.items():
-        ax[0].plot([freq]*2, [g, 0], 'r', lw=0.5)
-
-    ax[1].plot(f, phase)
-    #ax[1].plot(phaseCross, [180]*len(phaseCross), 'xr')
-    for freq, ph in pm.items():
-        if ph > 0:
-            ax[1].plot([freq]*2, [ph, 180], 'r', lw=0.5)
-        else:
-            ax[1].plot([freq]*2, [-180, ph], 'r', lw=0.5)
-    ax[0].legend()
+    plot_L(L, margins=True)
 
