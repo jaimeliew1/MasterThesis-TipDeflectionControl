@@ -93,13 +93,11 @@ def run(dlc, dlc_noipc, c, C, SAVE=False):
 if __name__ is '__main__':
 
     dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc_noipc.analysis()
-
     dlc = PostProc.DLC('dlc11_1')
-    dlc.analysis()
 
-    from Controllers.IPC07 import make
-    c = 'ipc07'
+
+    from Controllers.IPC_PI import make
+    c = 'ipcpi'
     run(dlc, dlc_noipc, c, make(), SAVE=False)
 
 

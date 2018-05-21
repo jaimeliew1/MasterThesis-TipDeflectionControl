@@ -29,6 +29,8 @@ def run(dlc=None, dlc_noipc=None, SAVE=None):
 
     fig, ax = ControllerEvaluation.magplotSetup(F1p=0.16)
     ax.set_xlim(0.05, 1.5)
+    ax.axhline(0, lw=1, c='0.8', ls='-')
+
 
     ax.plot(f, Mag[0], label='$S(C_{PI})$')
     for i in [1, 2, 3, 4]:
