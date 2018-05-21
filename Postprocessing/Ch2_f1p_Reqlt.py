@@ -1,46 +1,47 @@
 # -*- coding: utf-8 -*-
 """
-Calculates the lifetime equivalent load for simulation data which has
-simulation for each wind speed over a range wsp_range = [4, 26]
+Calculates the lifetime equivalent load for simulation data.
 @author: Jaime Liew
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from JaimesThesisModule import Analysis, PostProc
-from Configuration import Config
-#from matplotlib import patches
+from JaimesThesisModule import PostProc
+
 import math
 
 
 def run(dlc, dlc_noipc, SAVE=False):
-    c =  'ipcpi'
-    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
-    labels = ['Blade (flapwise)', 'Blade (edgewise)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
-    N = len(keys)
-    Req_l = []
-    Req_l_ref = []
-    for key in keys:
-        Req_l_ref.append(lifetimeReq(dlc_noipc(yaw=0), key))
-        Req_l.append(lifetimeReq(dlc(yaw=0, controller=c), key))
-    print(Req_l_ref)
-    print(Req_l)
 
-    # make a bargraph
-    width = 0.35
+    C = ['ipcpi', 'ipc04', 'ipc09', 'ipc10', 'ipc11']
+    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
+    labels = ['$C_{PI}$', '$C_{f1p}$', '$C_{f2p}$', '$C_{f3p}$', '$C_{f4p}$']
+    ticklabels = ['Blade\n(flapwise)', 'Blade\n(edgewise)', 'Main\nBearing\n (tilt)', 'Main\nBearing\n(yaw)']
+    N = len(keys)
+
+    Req_ref, Req_l = np.zeros(len(keys)), np.zeros([len(C), len(keys)])
+
+    for i, key in enumerate(keys):
+        Req_ref[i] = lifetimeReq(dlc_noipc.Sims, key)
+
+        for j, c in enumerate(C):
+            Req_l[j, i] = lifetimeReq(dlc(controller=c), key)
+
+   # bar graph
+    width = 0.8/(len(C) + 1)
     ind = np.arange(N)
+
     fig, ax = plt.subplots()
-    ax.grid(zorder=0)
-    ax.set_title('Lifetime Equivalent Load')
-    ax.set_ylabel('Moment [kNm]')
-    ax.bar(ind, Req_l_ref, width, zorder=3, label='No IPC')
-    ax.bar(ind + width, Req_l, width, zorder=3, label=c.upper())
-    ax.set_xticks(ind)
-    ax.set_xticklabels(labels, rotation = 30)
-    ax.legend()
+    ax.set_ylabel('$R_{eq}$ [kNm]')
+    ax.set_xticks(ind + 0.4)
+    ax.set_xticklabels(ticklabels)
+    ax.bar(ind, Req_ref, width, label = 'No Control', hatch='\\\\', fc='0.8', ec='0')
+    for j, c in enumerate(C):
+        ax.bar(ind + width*(j+1), Req_l[j, :], width, label=labels[j], ec='0')
+
+    ax.legend(ncol=2)
 
     if SAVE:
-        plt.savefig('../Figures/{}/{}_Lifetime_Req.png'.format(c, c), dpi=200)
-
+        plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
 
 
@@ -102,10 +103,8 @@ def fullDatasetGen(dlc):
 if __name__ is '__main__':
 
     dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc_noipc.analysis()
-
     dlc = PostProc.DLC('dlc11_1')
-    dlc.analysis()
+
 
     run(dlc, dlc_noipc, SAVE=False)
 

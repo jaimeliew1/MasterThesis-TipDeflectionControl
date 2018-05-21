@@ -41,7 +41,7 @@ def run(dlc=None, dlc_noipc=None, SAVE=None):
     ax.legend()
 
     if SAVE:
-        plt.savefig(SAVE, dpi=200)
+        plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
 
 
