@@ -75,7 +75,7 @@ def Margins(L, N=1000, fmax=1.5):
 
 
 def bodeSetup(xlim = [0.01, 1.5], F1p=None):
-    fig, axes = plt.subplots(2, 1, figsize=[6,6], sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=[6,6])
     plt.subplots_adjust(hspace=0.05)
     axes[0].grid('off')
     axes[1].grid('off')
@@ -85,13 +85,18 @@ def bodeSetup(xlim = [0.01, 1.5], F1p=None):
 
     axes[1].set_ylim([-180, 180])
     axes[0].set_xlim(xlim)
+    axes[1].set_xlim(xlim)
     axes[1].set_yticks(np.arange(-180, 180, 60))
     axes[0].set_xscale('log')
+    axes[1].set_xscale('log')
 
-
+    axes[0].set_xticks([F1p, 2*F1p, 3*F1p, 4*F1p], minor=True)
+    axes[0].set_xticklabels([], minor=True)
+    axes[0].set_xticklabels([])
     axes[1].set_xticks([F1p, 2*F1p, 3*F1p, 4*F1p], minor=True)
     axes[1].set_xticklabels(['$f_{1p}$', '$f_{2p}$', '$f_{3p}$', '$f_{4p}$'], minor=True)
-    axes[0].set_xticklabels([], minor=True)
+
+    #axes[0].set_xticklabels([], minor=True)
     axes[1].grid(which='minor')
     axes[0].grid(which='minor')
 
@@ -271,8 +276,8 @@ def plot_L(L, margins=False, save=False):
     plt.show(); print()
     return ax
 
-def plot_nyquist(L, zoom=None, margin=False, save=False):
-
+def plot_nyquist(L, zoom=None, margin=False, rightticks = False, save=False):
+    fig, axes = plt.subplots()
     nyquistSetup(axes, zoom=zoom)
     #axes[1].yaxis.tick_right(); axes[1].set_ylabel('')
 
@@ -292,8 +297,10 @@ def plot_nyquist(L, zoom=None, margin=False, save=False):
     axes.text(-0.5 + H_.real/2, H_.imag/2, '${:2.2f}$'.format(sm), rotation=angle, ha='center', va='bottom')
     axes.legend(loc='lower left')
 
+    if rightticks:
+        axes.yaxis.tick_right()
     if save:
-        plt.savefig(save, dpi=200)
+        plt.savefig(save, dpi=200, bbox_inches='tight')
     plt.show(); print()
     return sm
 
@@ -328,7 +335,7 @@ if __name__ == '__main__':
     # Plot Controller Robust Stability
 
     ax = plot_L(L, margins=True, save=SAVE)
-    sm = plot_nyquist(L, zoom=1.5, save=SAVE)
+    sm= plot_nyquist(L, zoom=1.5, save=SAVE)
 
     # determine tip trajectory tracking precompensator paramams
     _, mag, phase = signal.bode(T, w=0.16*2*np.pi)
