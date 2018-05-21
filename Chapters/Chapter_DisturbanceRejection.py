@@ -21,6 +21,7 @@ dlc_noipc = PostProc.DLC('dlc11_0')
 
 plt.rc('text', usetex=True)
 for script in figScripts:
+    print(f'Running {script}.py...')
     module = importlib.import_module('Postprocessing.' + script)
     module.run(dlc, dlc_noipc, SAVE = FigDir + script + '.png')
 plt.rc('text', usetex=False)

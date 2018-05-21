@@ -12,8 +12,8 @@ from Configuration import Config
 import math
 
 
-def run(dlc, dlc_noipc, c, SAVE=False):
-
+def run(dlc, dlc_noipc, SAVE=False):
+    c =  'ipcpi'
     keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
     labels = ['Blade (flapwise)', 'Blade (edgewise)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
     N = len(keys)
@@ -107,7 +107,7 @@ if __name__ is '__main__':
     dlc = PostProc.DLC('dlc11_1')
     dlc.analysis()
 
-    run(dlc, dlc_noipc, 'ipcpi', SAVE=False)
+    run(dlc, dlc_noipc, SAVE=False)
 
 
 
