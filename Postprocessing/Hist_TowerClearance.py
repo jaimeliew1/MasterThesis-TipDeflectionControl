@@ -36,7 +36,7 @@ def run(*Sims, labels=None, SAVE=None):
             label = labels[i]
         else:
             label = ''
-        plt.hist(tcl, 30, range=[0, 18], alpha=0.7, label=label)
+        plt.hist(tcl, 30, range=[5, 25], alpha=0.7, label=label)
 
     plt.legend()
     if SAVE:
@@ -49,21 +49,17 @@ def run(*Sims, labels=None, SAVE=None):
 
 if __name__ is '__main__':
     dlc11_0 = PostProc.DLC('dlc11_0')
-    dlc11_0.analysis()
-
     dlc11_1 = PostProc.DLC('dlc11_1')
-    dlc11_1.analysis()
-
+    dlc11_2 = PostProc.DLC('dlc11_2')
     dlc15_0 = PostProc.DLC('dlc15_0')
-    dlc15_0.analysis()
-
     dlc15_1 = PostProc.DLC('dlc15_1')
-    dlc15_1.analysis()
 
 
 
-    run(dlc15_0(wsp=12)[0], dlc15_1(controller='ipc07', wsp=12)[0],
+    #run(dlc15_0(wsp=12)[0], dlc15_1(controller='ipc07', wsp=12)[0],
+    #    labels=['no control', 'TDR'], SAVE=False)
+
+    run(dlc11_0(wsp=26)[0], dlc11_1(controller='ipc07', wsp=26)[0],
         labels=['no control', 'TDR'], SAVE=False)
-
-    run(dlc11_0(wsp=14)[0], dlc11_1(controller='ipc07', wsp=12)[0],
-        labels=['no control', 'TDR'], SAVE=False)
+    run(dlc11_0(wsp=26)[0], dlc11_2(controller='ipc_rbm07', wsp=26)[0],
+        labels=['no control', 'RBM'], SAVE=False)

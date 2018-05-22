@@ -12,10 +12,10 @@ import math
 
 def run(dlc, dlc_noipc, SAVE=False):
 
-    C = ['ipcpi', 'ipc04', 'ipc09', 'ipc10', 'ipc11']
-    keys = ['RBMf', 'RBMe', 'MBt', 'MBy']
-    labels = ['$C_{PI}$', '$C_{f1p}$', '$C_{f2p}$', '$C_{f3p}$', '$C_{f4p}$']
-    ticklabels = ['Blade\n(flapwise)', 'Blade\n(edgewise)', 'Main\nBearing\n (tilt)', 'Main\nBearing\n(yaw)']
+    C = ['ipcpi', 'ipc04', 'ipc07']
+    keys = ['RBMf','MBt', 'MBy']
+    labels = ['$C_{PI}$', '$C_{f1p}$', '$C_{2}$']
+    ticklabels = ['Blade\n(flapwise)', 'Main\nBearing\n (tilt)', 'Main\nBearing\n(yaw)']
     N = len(keys)
 
     Req_ref, Req_l = np.zeros(len(keys)), np.zeros([len(C), len(keys)])
@@ -41,16 +41,17 @@ def run(dlc, dlc_noipc, SAVE=False):
     ax.legend(ncol=2)
 
     if SAVE:
-        plt.savefig(SAVE, dpi=200, bbox_inches='tight')
+        pass
+        #plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
 
 
     # Save table data
-    tableRows = ['Blade (flap)', 'Blade (edge)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
-    with open('../Figures/Tables/Ch2_f1p_Reqlt.txt', 'w') as f:
-        for i in range(4):
+    tableRows = ['Blade (flap)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
+    with open('../Figures/Tables/Ch2_C2_Reqlt.txt', 'w') as f:
+        for i in range(3):
             line = tableRows[i] + '&'
-            for j in range(4):
+            for j in range(3):
                 line += '{:2.0f} & {:+2.2f} &'.format(
                         Req_l[j, i], (Req_l[j, i]/Req_ref[i] - 1)*100)
             line = line[:-1] +  '\\\\'
