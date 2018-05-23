@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import InterpolatedUnivariateSpline
 
-SAVE = True
+SAVE = False
 
 Z = [3.00000,6.00000,7.00004,8.70051,1.04020E+01,1.22046E+01,1.32065E+01,
 1.50100E+01,1.82151E+01,2.14178E+01,2.46189E+01,2.78193E+01,3.10194E+01,

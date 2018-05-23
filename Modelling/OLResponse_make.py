@@ -44,25 +44,30 @@ def plotSetup(wsp):
 
     return fig, ax
 
-def OLFreqResp(wsp, dlc_noipc, smooth= False):
+
+
+def OLFreqResp(wsp, dlc_noipc, smooth=False):
     sim = dlc_noipc(yaw=0, wsp=wsp)[0]
     Ys = []
+    channels =  {'TD1' : 49, 'TD2' : 52, 'TD3' : 55}
     for seed in sim:
+        data = seed.loadFromSel(channels)
         for blade in [1, 2, 3]:
             key = 'TD{}'.format(blade)
 
             if not smooth:
-                f, Y = freqResp(seed.Data[key], Fs, fmax=10)
+                f, Y = freqResp(data[key], Fs, fmax=10)
                 Ys.append(Y)
 
             if smooth:
-                f, Py = signal.welch(seed.Data[key], Fs, nperseg=1024*8)
+                f, Py = signal.welch(data[key], Fs, nperseg=1024*8)
                 Ys.append(np.sqrt(Fs*Py/60000))
 
     Yave = np.mean(Ys, axis=0)
 
 
     return f, Yave
+
 
 
 def saveResponse(f, Y, wsp):
@@ -78,7 +83,6 @@ def saveResponse(f, Y, wsp):
 if __name__ is '__main__':
     # Load HAWC2 result data
     dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc_noipc.analysis(mode='fullload')
 
     WSP = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26]
 
