@@ -12,9 +12,10 @@ import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
 from JaimesThesisModule.Misc import readHawc2Res
+from Configuration.Config import Config
 
 plt.rc('text', usetex=True)
-save = False
+save = True
 
 channels = {
     't'         : 1,    #time [s]
@@ -33,13 +34,13 @@ channels = {
     'IPCDem3'   : 101}
 
 
-dir_res = 'DTU10MW_Turbine/res/template/'
+dir_res = Config.modelpath + 'res/Pitchstep/'
 dir_mat = 'Data/'
 
 # get files with the filename form 'pitchstep_xx' where xx is the wind speed
 # of the simulation.
-#resFiles = [x[:-4] for x in os.listdir(dir_res) if x.endswith('.sel')]
-resFiles = [x for x in resFiles if x.startswith('pitchstep')]
+resFiles = [x[:-4] for x in os.listdir(dir_res) if x.endswith('.sel')]
+resFiles = [x for x in resFiles if x.startswith('pitchstep_lin')]
 
 #resFiles = ['pitchstep_04', 'pitchstep_06']
 #resFiles = ['pitchstep_06']
@@ -96,8 +97,8 @@ for i, wsp in enumerate(wsps):
     axes[0].set_ylabel('$\~{x}(t) [rad]$')
     #axes[1].set_ylabel('$\~{y}(t) [m]$') # UNITS CHANGED
     axes[1].set_ylabel('$\~{y}(t) [kNm]$')
-    if True:
-        plt.savefig('../Figures/systemIdentification/pitchstep_RBM_{}.png'.format(wsp), dpi=200)
+    #if True:
+        #plt.savefig('../Figures/systemIdentification/pitchstep_RBM_{}.png'.format(wsp), dpi=200)
     plt.show(); print()
 # save results to a matlab .m file
 
