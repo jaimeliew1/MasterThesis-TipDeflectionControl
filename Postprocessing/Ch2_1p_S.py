@@ -32,9 +32,10 @@ def run(dlc=None, dlc_noipc=None, SAVE=None):
     ax.axhline(0, lw=1, c='0.8', ls='-')
 
 
-    ax.plot(f, Mag[0], label='$S(C_{PI})$')
+    colors = ['#a1dab4','#41b6c4','#2c7fb8','#253494']
+    ax.plot(f, Mag[0], '-.', c='tab:orange', label='$S(C_{PI})$')
     for i in [1, 2, 3, 4]:
-        ax.plot(f, Mag[i], '-.', label='$S(C_{f' + f'{i}' + 'p})$')
+        ax.plot(f, Mag[i], '-', c=colors[i-1], label='$S(C_{f' + f'{i}' + 'p})$')
 
 
 

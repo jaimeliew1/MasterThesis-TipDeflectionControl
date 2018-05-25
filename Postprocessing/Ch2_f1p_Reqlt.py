@@ -29,6 +29,8 @@ def run(dlc, dlc_noipc, SAVE=False):
    # bar graph
     width = 0.8/(len(C) + 1)
     ind = np.arange(N)
+    # http://colorbrewer2.org
+    colors = ['tab:orange', '#ffffcc','#a1dab4','#41b6c4','#225ea8']
 
     fig, ax = plt.subplots()
     ax.set_ylabel('$R_{eq}$ [kNm]')
@@ -36,7 +38,7 @@ def run(dlc, dlc_noipc, SAVE=False):
     ax.set_xticklabels(ticklabels)
     ax.bar(ind, Req_ref, width, label = 'No Control', hatch='\\\\', fc='0.8', ec='0')
     for j, c in enumerate(C):
-        ax.bar(ind + width*(j+1), Req_l[j, :], width, label=labels[j], ec='0')
+        ax.bar(ind + width*(j+1), Req_l[j, :], width, label=labels[j], ec='0', fc = colors[j])
 
     ax.legend(ncol=2)
 
