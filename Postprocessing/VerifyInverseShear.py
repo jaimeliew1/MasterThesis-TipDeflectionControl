@@ -23,18 +23,18 @@ def run(dlc1, dlc2, SAVE=None):
 
     for i, seed in enumerate(ref1):
         if i == 0:
-            refx = seed.Data.Azim
-            refy = seed.Data[keys].as_matrix()
-        refx = np.append(refx, seed.Data.Azim)
-        refy = np.append(refy, seed.Data[keys].as_matrix(), 0)
+            refx = seed.data.Azim
+            refy = seed.data[keys].as_matrix()
+        refx = np.append(refx, seed.data.Azim)
+        refy = np.append(refy, seed.data[keys].as_matrix(), 0)
 
      # get ref2 sim data
     for i, seed in enumerate(ref2):
         if i == 0:
-            ref2x = seed.Data.Azim
-            ref2y = seed.Data[keys].as_matrix()
-        ref2x = np.append(ref2x, seed.Data.Azim)
-        ref2y = np.append(ref2y, seed.Data[keys].as_matrix(), 0)
+            ref2x = seed.data.Azim
+            ref2y = seed.data[keys].as_matrix()
+        ref2x = np.append(ref2x, seed.data.Azim)
+        ref2y = np.append(ref2y, seed.data[keys].as_matrix(), 0)
 
     # Set up plot
     fig, ax = plt.subplots(3, 2, sharey=True, figsize=[7, 6])
@@ -76,15 +76,10 @@ def run(dlc1, dlc2, SAVE=None):
 
 
 if __name__ is '__main__':
-    _locals = locals().keys()
-    if not all(x in _locals for x in ['dlc15_0', 'dlc15_1', 'dlc11_0']):
-        dlc15_0 = PostProc.DLC('dlc15_0')
-        dlc15_0.analysis(mode='fullload')
 
-        dlc15_1 = PostProc.DLC('dlc15_1')
-        dlc15_1.analysis(mode='fullload')
+    dlc15_0 = PostProc.DLC('dlc15_0')
+    dlc15_1 = PostProc.DLC('dlc15_1')
+    dlc11_0 = PostProc.DLC('dlc11_0')
 
-        dlc11_0 = PostProc.DLC('dlc11_0')
-        dlc11_0.analysis(mode='fullload')
 
-    run(dlc11_0, dlc15_0, SAVE=True)
+    run(dlc11_0, dlc15_0, SAVE=False)

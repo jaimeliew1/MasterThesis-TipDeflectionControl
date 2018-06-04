@@ -101,7 +101,7 @@ def run(dlc, dlc_noipc, SAVE=False):
     # lifetime equivalent load table
 
     tableRows = ['Blade (flap)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
-    f = open('../Figures/Tables/Ch2_extreme_Reqlt.txt', 'w')
+    f = open('../Figures/Tables/Ch2_inverse_Reqlt.txt', 'w')
     for i, row in enumerate(keys):
         leqref = lifetimeReq(dlc_noipc.Sims, row)
         leq1 = lifetimeReq(dlc(controller='ipc04'), row)
@@ -121,8 +121,8 @@ def run(dlc, dlc_noipc, SAVE=False):
 
 if __name__ is '__main__':
 
-    dlc_noipc = PostProc.DLC('dlc13_0')
-    dlc = PostProc.DLC('dlc13_1')
+    dlc_noipc = PostProc.DLC('dlc15_0')
+    dlc = PostProc.DLC('dlc15_1')
 
     run(dlc, dlc_noipc, SAVE=False)
 
