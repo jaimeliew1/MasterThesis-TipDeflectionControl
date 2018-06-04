@@ -237,22 +237,36 @@ class Simulation(object):
         self.data = dict()
 
         wohler = [10, 10, 10, 4, 4]
-        # Req
-        # for each channel (RBMf, RBMe, etc...)
-        for i, key in enumerate(['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy']):
-            temp = sum(1/N*seed.data[key]**wohler[i] for seed in self.seeds)
-            self.data[key] = temp**(1/wohler[i])
 
-        for i, key in zip([5, 6, 7, 8, 9], ['A1p', 'A2p',
-                   'A3p','A4p','shutdown']):
-            self.data[key] = np.mean([seed.data[key] for seed in self.seeds])
+
+        if all(x.data.shutdown for x in self.seeds):
+            for key in ['A1p', 'A2p','A3p','A4p','RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy']:
+                self.data[key] = 0
+        else:
+
+            Nsd = len([x for x in self.seeds if not x.data.shutdown])
+            # Req
+            # for each channel (RBMf, RBMe, etc...)
+            for i, key in enumerate(['RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy']):
+                temp = sum(1/Nsd*seed.data[key]**wohler[i] for seed in self.seeds if not seed.data.shutdown)
+                self.data[key] = temp**(1/wohler[i])
+
+
+
+            for key in ['A1p', 'A2p','A3p','A4p']:
+                self.data[key] = np.mean([seed.data[key] for seed in self.seeds if seed.data.shutdown==0])
+
+        self.data['shutdown'] = np.mean([seed.data.shutdown for seed in self.seeds])
 
         self.data['tcl'] = min(seed.data['tcl'] for seed in self.seeds)
 
         # if any seeds shutdown, then set all summary data values to zero
-        if any(x.data.shutdown for x in self.seeds):
-            for key in self.data.keys():
-                self.data[key] = 0
+#        if any(x.data.shutdown for x in self.seeds):
+#            for key in self.data.keys():
+#                if key is not 'shutdown':
+#                    self.data[key] = 0
+
+
 
 
         self.data = pd.Series(list(self.data.values()),
