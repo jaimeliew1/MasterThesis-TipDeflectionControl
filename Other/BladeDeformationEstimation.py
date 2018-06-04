@@ -15,11 +15,16 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule.Misc import readHawc2Res
 import time
 
-Z = [3.00000,6.00000,7.00004,8.70051,1.04020E+01,1.22046E+01,1.32065E+01,
+SAVE = True
+
+
+
+Z = np.array([3.00000,6.00000,7.00004,8.70051,1.04020E+01,1.22046E+01,1.32065E+01,
 1.50100E+01,1.82151E+01,2.14178E+01,2.46189E+01,2.78193E+01,3.10194E+01,
 3.42197E+01,4.02204E+01,4.66217E+01,5.30232E+01,5.94245E+01,6.58255E+01,
 7.22261E+01,7.90266E+01,8.05267E+01,8.20271E+01,8.35274E+01,8.50277E+01,
-8.63655E+01]
+8.63655E+01])
+L = Z[-1]
 
 prebend = np.array([-1.22119E-02,
 -2.49251E-02,
@@ -171,7 +176,7 @@ def plotDeformation(i, title='', save=None):
 
 
 
-E1, E2, E3 = [], [], [] #square error
+E1, E2, E3 = [], [], [] # integral error
 plot = False
 for i in range(0, len(data)):
 
@@ -182,16 +187,79 @@ for i in range(0, len(data)):
     est2 = estimateDeformation2(RBM, TD) + prebend
     est3 = estimateDeformation3(RBM, TD) + prebend
 
-    E1.append(sum((est1-data2[i,:])**2))
-    E2.append(sum((est2-data2[i,:])**2))
-    E3.append(sum((est3-data2[i,:])**2))
+    E1.append(np.trapz(abs(est1-data2[i,:]), Z))
+    E2.append(np.trapz(abs(est2-data2[i,:]), Z))
+    E3.append(np.trapz(abs(est3-data2[i,:]), Z))
 
 
+#%% error histogram
+N = len(E1)
+plt.figure()
+plt.xlim([0, 30])
+plt.hist(E1, 20, range=[0, 30], alpha=0.8, weights=1/N*np.ones(N),label='Strain Gauge + TD Sensor')
+plt.hist(E2, 20, range=[0, 30], alpha=0.8, weights=1/N*np.ones(N),
+         label='TD Sensor')
+plt.hist(E3, 20, range=[0, 30], alpha=0.8, weights=1/N*np.ones(N), label='Strain Gauge')
+
+plt.legend()
+plt.xlabel('estimation error [$m^2$]')
+plt.ylabel('Probability [-]')
+
+if SAVE:
+    plt.savefig('..\Figures\BladeDeformationEstimation\TD_RBM_Error.png', dpi = 200, bbox_inches='tight')
+plt.show(); print()
+
+#%% plot deformation with area difference
+def plotDeformation2(Z, est, real, caption='', SAVE=False):
+    fig, ax = plt.subplots(figsize=(4,4))
+    plt.grid()
+    plt.ylim(-3, 7)
+    plt.xlim(0, 1)
+
+    plt.xlabel('Nondimensional Span [-]')
+    plt.xticks([0, 1/4, 2/4, 3/4, 1])
+    ax.set_xticklabels([0, '$L/4$','$L/2$','$3L/4$', '$L$'])
+    plt.ylabel('Deformation [m]')
+    plt.plot(Z/L, est, label=caption)
+    plt.plot(Z/L, real, '--k', label='Actual')
+    plt.fill_between(Z/L, est1, data2[i, :], color='r', alpha=0.5, label='Error')
+    ax.set_axisbelow(True)
+    plt.legend()
+
+    if SAVE:
+        plt.savefig(f'..\Figures\BladeDeformationEstimation\{SAVE}.png', dpi = 200, bbox_inches='tight')
+    plt.show(); print()
+
+
+
+i = np.argmax(E1)
+RBM = -data.RBM1[i]*1000
+TD = data.TD1[i] - prebend[-1]
+est1 = estimateDeformation(RBM, TD) + prebend
+plotDeformation2(Z, est1, data2[i, :], 'Hybrid Sensor', 'Hybrid')
+
+i = np.argmax(E2)
+RBM = -data.RBM1[i]*1000
+TD = data.TD1[i] - prebend[-1]
+est1 = estimateDeformation2(RBM, TD) + prebend
+plotDeformation2(Z, est1, data2[i, :], 'TD Sensor', 'TD')
+
+i = np.argmax(E3)
+RBM = -data.RBM1[i]*1000
+TD = data.TD1[i] - prebend[-1]
+est1 = estimateDeformation3(RBM, TD) + prebend
+plotDeformation2(Z, est1, data2[i, :], 'Strain Gauge', 'StrainGauge')
+#plt.legend(['TD sensor','RBM sensor', 'TD & RBM sensors', 'actual'], loc='upper left')
+
+
+
+
+#%%
 print('TD and RBM sensors:', np.mean(E1))
 print('TD sensors:', np.mean(E2))
 print('RBM sensors:', np.mean(E3))
 
 #%% plot worst cases for each sensor
-plotDeformation(np.argmax(E1), save='..\Figures\BladeDeformationEstimation\TD_RBM_BladeDeformationEstimation.png')
-plotDeformation(np.argmax(E2), save='..\Figures\BladeDeformationEstimation\TD_BladeDeformationEstimation.png')
-plotDeformation(np.argmax(E3), save='..\Figures\BladeDeformationEstimation\RBM_BladeDeformationEstimation.png')
+#plotDeformation(np.argmax(E1), save='..\Figures\BladeDeformationEstimation\TD_RBM_BladeDeformationEstimation.png')
+#plotDeformation(np.argmax(E2), save='..\Figures\BladeDeformationEstimation\TD_BladeDeformationEstimation.png')
+#plotDeformation(np.argmax(E3), save='..\Figures\BladeDeformationEstimation\RBM_BladeDeformationEstimation.png')
