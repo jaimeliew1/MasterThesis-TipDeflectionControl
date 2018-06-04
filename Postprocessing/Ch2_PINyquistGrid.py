@@ -64,7 +64,7 @@ def run(dlc=None, dlc_noipc=None, SAVE=None):
 
     Kps, Tis = np.meshgrid([0.01, 0.015, 0.02], [0.5, 1, 2])
 
-    fig, axes = plt.subplots(3, 3, sharex=True, sharey=True, figsize=(7,7))
+    fig, axes = plt.subplots(3, 3, sharex=False, sharey=False, figsize=(7,7))
     plt.subplots_adjust(wspace=0.05, hspace=0.05)
     for i in range(3):
         for j in range(3):
