@@ -22,20 +22,24 @@ def lowerPeaks(X):
     return peaks
 
 def run(dlc, dlc_noipc, SAVE=None):
+    dlc15_2 = PostProc.DLC('dlc15_2')
 
     wsp = 18
     c = 'ipc07'
     Sims = []
     Sims.append(dlc15_0(wsp=wsp)[0])
     Sims.append(dlc15_1(controller=c, wsp=wsp)[0])
-    labels = ['no control', '$C_2$']
+    Sims.append(dlc15_2(controller=c, wsp=wsp, _amp=1)[0])
+    Sims.append(dlc15_2(controller=c, wsp=wsp, _amp=2)[0])
+    Sims.append(dlc15_2(controller=c, wsp=wsp, _amp=3)[0])
+    labels = ['no control', '$C_2$', 'TTT 1m', 'TTT 2m', 'TTT 3m']
 
     channels = {'tcl':111}
 
 
     plt.figure()
     histProps = {'bins'     : 30,
-             'range'    :[6, 20],
+             'range'    :[8, 25],
              'alpha'    : 0.7,
              'normed'   : True,
              'histtype' : 'stepfilled',
