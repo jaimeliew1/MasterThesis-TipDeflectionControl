@@ -243,7 +243,7 @@ class Simulation(object):
             for key in ['A1p', 'A2p','A3p','A4p','RBMf', 'RBMe', 'RBMt', 'MBt', 'MBy']:
                 self.data[key] = 0
         else:
-
+            self.data['tcl'] = min(seed.data['tcl'] for seed in self.seeds if not seed.data.shutdown)
             Nsd = len([x for x in self.seeds if not x.data.shutdown])
             # Req
             # for each channel (RBMf, RBMe, etc...)
@@ -258,7 +258,7 @@ class Simulation(object):
 
         self.data['shutdown'] = np.mean([seed.data.shutdown for seed in self.seeds])
 
-        self.data['tcl'] = min(seed.data['tcl'] for seed in self.seeds)
+
 
         # if any seeds shutdown, then set all summary data values to zero
 #        if any(x.data.shutdown for x in self.seeds):
@@ -305,7 +305,7 @@ class DLC(object):
 
 
 
-        if basename == 'dlc11_3':
+        if basename == 'dlc11_3' or basename == 'dlc15_2':
             self.consolidateSimulations(unique=['wsp', 'controller', '_amp', 'Kp', 'yaw'])
         else:
             self.consolidateSimulations()
@@ -412,5 +412,5 @@ class DLC(object):
 
 
 if __name__ is '__main__':
-    dlc_noipc = DLC('dlc11_3')
+    dlc = DLC('dlc15_2')
 
