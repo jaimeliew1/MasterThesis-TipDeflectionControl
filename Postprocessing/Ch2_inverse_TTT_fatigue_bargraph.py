@@ -88,6 +88,7 @@ def run(dlc, dlc_noipc, SAVE=False):
         ax.grid(True, axis='y')
         ax.set_axisbelow(True)
         ax.bar(WSP, Req_ol, width, label = 'No control', hatch='\\\\', fc='0.8', ec='0')
+        # http://colorbrewer2.org
         colors = ['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']
         for j, a in enumerate([0] + Amps):
             ax.bar(WSP + width*(j+1), Req_cl[j], width, label=labels[j], ec='0',
