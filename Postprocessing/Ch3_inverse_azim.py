@@ -12,8 +12,8 @@ from JaimesThesisModule import PostProc
 
 def run(dlcs, wsp=20, c='ipc04', SAVE=None):
 
-    dlc15_1 = dlcs['dlc15_1']
-    dlc15_2 = dlcs['dlc15_2']
+    dlc = dlcs['dlc15_1']
+    dlc2 = dlcs['dlc15_2']
     channels = {'Azim': 2,
                 'RBM1'      : 26,
                 'RBM2'      : 29,
@@ -38,7 +38,7 @@ def run(dlcs, wsp=20, c='ipc04', SAVE=None):
     # get controlled sim data
     refs = dlc2(wsp=wsp, controller='ipc07')
     for amp in [1, 2, 3]:
-        ref = [x for x in refs if x.amp==amp][0]
+        ref = [x for x in refs if x.amp == amp][0]
         for i, seed in enumerate(ref):
             data = seed.loadFromSel(channels)
             if i == 0:
@@ -105,10 +105,10 @@ def run(dlcs, wsp=20, c='ipc04', SAVE=None):
 
 
 
-if __name__ is '__main__':
+if __name__ == '__main__':
     dlcs = {
-    'dlc15_0':PostProc.DLC('dlc15_0'),
-    'dlc15_1':PostProc.DLC('dlc15_1'),
-    'dlc15_2':PostProc.DLC('dlc15_2')}
+        'dlc15_0':PostProc.DLC('dlc15_0'),
+        'dlc15_1':PostProc.DLC('dlc15_1'),
+        'dlc15_2':PostProc.DLC('dlc15_2')}
 
     run(dlcs, SAVE=False)
