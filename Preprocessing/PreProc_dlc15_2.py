@@ -48,7 +48,7 @@ Functionals = {'seed'       : lambda x: 1000*x['_seed'] + x['wsp'],
 manifest = PreProc.Manifest(basename, Constants, Variables, Functionals)
 manifest.printOverview()
 
-manifest.checkTemplate('../Manifests/Master_TTT.htc')
+manifest.checkTemplate('../Manifests/Master_InverseShear_TTT.htc')
 manifest.missingRes()
 manifest.save_csv()
-manifest.generate_htc_files('../Manifests/Master_TTT.htc', overwrite=False)
+manifest.generate_htc_files('../Manifests/Master_InverseShear_TTT.htc', overwrite=True)
