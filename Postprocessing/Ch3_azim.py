@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
 
-def run(dlc_noipc, dlc, dlc2, wsp=20, c='ipc04', SAVE=None):
+def run(dlcs, wsp=20, c='ipc04', SAVE=None):
+    dlc = dlcs['dlc11_1']
+    dlc2 = dlcs['dlc11_3']
     channels = {'Azim': 2,
                 'RBM1'      : 26,
                 'RBM2'      : 29,
@@ -103,8 +105,9 @@ def run(dlc_noipc, dlc, dlc2, wsp=20, c='ipc04', SAVE=None):
 
 
 if __name__ is '__main__':
-
-    dlc = PostProc.DLC('dlc11_1')
-    dlc2 = PostProc.DLC('dlc11_3')
-
-    run(None, dlc, dlc2, SAVE=False)
+    dlcs = {
+    'dlc11_0':PostProc.DLC('dlc11_0'),
+    'dlc11_1':PostProc.DLC('dlc11_1'),
+    'dlc11_3':PostProc.DLC('dlc11_3'),
+    }
+    run(dlcs, SAVE=False)

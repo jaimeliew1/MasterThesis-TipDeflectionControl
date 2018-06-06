@@ -56,7 +56,7 @@ def plot_T(T1, T2, SAVE=False):
     plt.show(); print()
 
 
-def run(dlc_noipc, dlc, dlc2, SAVE=None):
+def run(dlcs, SAVE=None):
     wsp =  18
     C1 = IPC04.make()
     C2 = IPC07.make()
@@ -69,5 +69,5 @@ def run(dlc_noipc, dlc, dlc2, SAVE=None):
 
 
 if __name__ == '__main__':
-    run(0, 0, 0)
+    run(0, 0)
 

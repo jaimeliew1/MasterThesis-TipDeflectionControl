@@ -2,14 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from JaimesThesisModule import PostProc
-from mpl_toolkits.mplot3d import Axes3D
-
-
-
-
-
 
 
 
@@ -60,14 +53,17 @@ def formatViolinplot(parts, colors=None):
 
 
 
-def run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc07', maxAmp=3, SAVE=False):
+def run(dlcs, wsp=18, c='ipc07', maxAmp=3, SAVE=False):
+    dlc_noipc = dlcs['dlc11_0']
+    dlc = dlcs['dlc11_1']
+    dlc2 = dlcs['dlc11_3']
     channels = {'PR1':  5,  # Pitch rate blade 1 [deg/s]
                 'PR2':  7,
                 'PR3':  9}
 
     #%% Load pitch rate of all blades into dictionary of lists
     X = {}
-    labels = ['no\nIPC'] + [f'TTT {x}m' for x in range(maxAmp+1)]
+    labels = ['no\nIPC'] + [f'${x}m$' for x in range(maxAmp+1)]
 
     # load data for no IPC
     Sims = dlc_noipc(wsp=wsp)[0]
@@ -104,7 +100,7 @@ def run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc07', maxAmp=3, SAVE=False):
     plt.axvline(x=-10, lw=1, ls='--', c='k')
     plt.axvline(x=10, lw=1, ls='--', c='k')
     plt.xlabel('Blade pitch rate $[^o/s]$')
-    plt.ylabel('Tip Tracking Amplitude $[m]$')
+    plt.ylabel('Tip Tracking Amplitude')
     parts = plt.violinplot(X.values(), positions=np.arange(len(X)), vert=False, showmeans=True)
     # http://colorbrewer2.org
     colors = ['0.7', '#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']
@@ -128,13 +124,16 @@ def run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc07', maxAmp=3, SAVE=False):
 
 
 if __name__ is '__main__':
-    dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc = PostProc.DLC('dlc11_1')
-    dlc2 = PostProc.DLC('dlc11_3')
+    dlcs = {'dlc11_0':PostProc.DLC('dlc11_0'),
+    'dlc11_1':PostProc.DLC('dlc11_1'),
+    'dlc11_3':PostProc.DLC('dlc11_3'),
+    'dlc15_0':PostProc.DLC('dlc15_0'),
+    'dlc15_1':PostProc.DLC('dlc15_1'),
+    'dlc15_2':PostProc.DLC('dlc15_2')}
 
 
-    X = run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc07', maxAmp=4, SAVE=False)
-    run(PostProc.DLC('dlc15_0'), PostProc.DLC('dlc15_1'), PostProc.DLC('dlc15_2'), wsp=18, c='ipc04', maxAmp=4, SAVE=False)
+    X = run(dlcs, wsp=18, c='ipc07', maxAmp=4, SAVE=False)
+    #run(PostProc.DLC('dlc15_0'), PostProc.DLC('dlc15_1'), PostProc.DLC('dlc15_2'), wsp=18, c='ipc04', maxAmp=4, SAVE=False)
 
     #%%
 

@@ -16,14 +16,18 @@ if not os.path.isdir(FigDir):
 
 figScripts = [x[:-3] for x in os.listdir('../Postprocessing') if 'Ch3_' in x]
 
-dlc_noipc = PostProc.DLC('dlc11_0')
-dlc = PostProc.DLC('dlc11_1')
-dlc2 = PostProc.DLC('dlc11_3')
+dlcs = {'dlc11_0':PostProc.DLC('dlc11_0'),
+'dlc11_1':PostProc.DLC('dlc11_1'),
+'dlc11_3':PostProc.DLC('dlc11_3'),
+'dlc15_0':PostProc.DLC('dlc15_0'),
+'dlc15_1':PostProc.DLC('dlc15_1'),
+'dlc15_2':PostProc.DLC('dlc15_2')}
+
 
 plt.rc('text', usetex=True)
 for script in figScripts:
     module = importlib.import_module('Postprocessing.' + script)
-    module.run(dlc_noipc, dlc, dlc2, SAVE = FigDir + script + '.png')
+    module.run(dlcs, SAVE = FigDir + script + '.png')
 plt.rc('text', usetex=False)
 
 

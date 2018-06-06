@@ -21,8 +21,10 @@ def lowerPeaks(X):
             peaks.append(x)
     return peaks
 
-def run(dlc, dlc_noipc, SAVE=None):
-    dlc15_2 = PostProc.DLC('dlc15_2')
+def run(dlcs, SAVE=None):
+    dlc15_0 = dlcs['dlc15_0']
+    dlc15_1 = dlcs['dlc15_1']
+    dlc15_2 = dlcs['dlc15_2']
 
     wsp = 18
     c = 'ipc07'
@@ -68,9 +70,11 @@ def run(dlc, dlc_noipc, SAVE=None):
 
 
 if __name__ is '__main__':
-    dlc15_0 = PostProc.DLC('dlc15_0')
-    dlc15_1 = PostProc.DLC('dlc15_1')
+    dlcs = {
+    'dlc15_0':PostProc.DLC('dlc15_0'),
+    'dlc15_1':PostProc.DLC('dlc15_1'),
+    'dlc15_2':PostProc.DLC('dlc15_2')}
 
     wsp = 18
     c = 'ipc07'
-    run(dlc15_0, dlc15_1, SAVE=False)
+    run(dlcs, SAVE=False)

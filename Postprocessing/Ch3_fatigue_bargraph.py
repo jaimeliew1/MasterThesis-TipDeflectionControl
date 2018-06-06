@@ -8,8 +8,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
-def run(dlc_noipc, dlc, dlc2, c='ipc07', SAVE=False):
-
+def run(dlcs, c='ipc07', SAVE=False):
+    dlc_noipc = dlcs['dlc11_0']
+    dlc = dlcs['dlc11_1']
+    dlc2 = dlcs['dlc11_3']
     A = [1, 2, 3]
     keys = ['RBMf', 'MBt', 'MBy']
     titles = ['Blade (flapwise)',
@@ -66,12 +68,12 @@ def run(dlc_noipc, dlc, dlc2, c='ipc07', SAVE=False):
 
 
 if __name__ is '__main__':
-
-    dlc_noipc = PostProc.DLC('dlc11_0')
-    dlc = PostProc.DLC('dlc11_1')
-    dlc2 = PostProc.DLC('dlc11_3')
-
-    run(dlc_noipc, dlc, dlc2, SAVE=False)
+    dlcs = {
+    'dlc11_0':PostProc.DLC('dlc11_0'),
+    'dlc11_1':PostProc.DLC('dlc11_1'),
+    'dlc11_3':PostProc.DLC('dlc11_3'),
+    }
+    run(dlcs, SAVE=False)
 
 
 
