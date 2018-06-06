@@ -22,7 +22,7 @@ def lowerPeaks(t, X):
         if (X[i-1] >= x) and (X[i+1] > x):
             T.append(t[i])
             peaks.append(x)
-    return T, peaks
+    return np.array(T), np.array(peaks)
 
 
 
@@ -43,7 +43,7 @@ def run(dlcs, SAVE=None):
     plt.xlabel('Time [s]')
     plt.ylabel('Minimum tower clearance [m]')
     start = 100#340
-    plt.xlim(start, start + 150)
+    plt.xlim(start, start + 100)
     plt.plot(t, tcl)
     plt.plot(T, valleys, 'xr')
 
@@ -59,4 +59,4 @@ if __name__ is '__main__':
     dlcs = {
     'dlc15_0':PostProc.DLC('dlc15_0')}
 
-    T, valleysl = run(dlcs, SAVE=False)
+    T, valleys = run(dlcs, SAVE=False)

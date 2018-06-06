@@ -41,7 +41,7 @@ def run(dlcs, SAVE=None):
 
     plt.figure()
     histProps = {'bins'     : 30,
-             'range'    :[8, 25],
+             #'range'    :[8, 25],
              'alpha'    : 0.7,
              'normed'   : True,
              'histtype' : 'stepfilled',
