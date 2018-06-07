@@ -8,10 +8,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
-def run(dlcs, c='ipc07', SAVE=False):
-    dlc_noipc = dlcs['dlc11_0']
-    dlc = dlcs['dlc11_1']
-    dlc2 = dlcs['dlc11_3']
+def run(dlcs, SAVE=None):
+    if SAVE:
+        SAVE1 = SAVE[:-4] + '_normal_ipc04.png'
+        SAVE2 = SAVE[:-4] + '_normal_ipc07.png'
+        SAVE3 = SAVE[:-4] + '_inverse_ipc04.png'
+        SAVE4 = SAVE[:-4] + '_inverse_ipc07.png'
+    else:
+        SAVE1 = SAVE2 = SAVE3 = SAVE4= None
+    _run(dlcs['dlc11_0'], dlcs['dlc11_1'], dlcs['dlc11_3'], c='ipc04', SAVE=SAVE1)
+    _run(dlcs['dlc11_0'], dlcs['dlc11_1'], dlcs['dlc11_3'], c='ipc07', SAVE=SAVE2)
+    _run(dlcs['dlc15_0'], dlcs['dlc15_1'], dlcs['dlc15_2'], c='ipc04',SAVE=SAVE3)
+    _run(dlcs['dlc15_0'], dlcs['dlc15_1'], dlcs['dlc15_2'], c='ipc07',SAVE=SAVE4)
+
+
+
+def _run(dlc_noipc, dlc, dlc2, c='ipc04', SAVE=False):
     A = [1, 2, 3]
     keys = ['RBMf', 'MBt', 'MBy']
     titles = ['Blade (flapwise)',
@@ -72,7 +84,9 @@ if __name__ is '__main__':
     'dlc11_0':PostProc.DLC('dlc11_0'),
     'dlc11_1':PostProc.DLC('dlc11_1'),
     'dlc11_3':PostProc.DLC('dlc11_3'),
-    }
+    'dlc15_0':PostProc.DLC('dlc15_0'),
+    'dlc15_1':PostProc.DLC('dlc15_1'),
+    'dlc15_2':PostProc.DLC('dlc15_2')}
     run(dlcs, SAVE=False)
 
 
