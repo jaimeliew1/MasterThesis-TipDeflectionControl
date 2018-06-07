@@ -62,17 +62,16 @@ def formatViolinplot(parts, color=None):
 def get_pa_data_from_sim(sim):
      #pitch angle blade 1 [deg]
     channels = {'pitch1': 4, 'pitch2':6, 'pitch3':8}
-    pa = []
+    pa = np.empty([0, 3])
     for seed in sim:
         if seed.data.shutdown:
             continue
         data = seed.loadFromSel(channels=channels)
-        for key in channels.keys():
-            pa += list(data[key])
+        pa = np.append(pa, data.values - np.reshape(data.values.mean(1), [-1, 1]))
     if len(pa) == 0:
         pa = [0]
     else:
-        pa = np.array(pa) - np.mean(pa)
+        pa = np.reshape(pa, [-1])
     return pa
 
 
@@ -110,7 +109,7 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
 
     # plot setup
     plt.figure(figsize=[4, 4])
-
+    plt.xlim(-8, 8)
     plt.yticks(np.arange(5), labels)
     plt.xlabel('Blade Pitch Angle Purturbation $[^o]$')
     plt.ylabel('Tip Tracking Amplitude $[m]$')
