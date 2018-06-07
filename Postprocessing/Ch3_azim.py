@@ -34,10 +34,10 @@ def run(dlcs, SAVE=None):
         SAVE1 = SAVE2 = None
 
     _run(dlcs['dlc11_1'], dlcs['dlc11_3'], SAVE=SAVE1)
-    _run(dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE2)
+    _run(dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE2, na=True)
 
 
-def _run(dlc1, dlc2, wsp=20, SAVE=None):
+def _run(dlc1, dlc2, wsp=20, SAVE=None, na=False):
 
     # First row data (ipc04)
     azim1, td1 = {}, {}
@@ -89,6 +89,16 @@ def _run(dlc1, dlc2, wsp=20, SAVE=None):
     x = np.linspace(0, 360, 360)
     y = -np.cos(np.deg2rad(x))
     for i, key in enumerate(azim1.keys()):
+        # dirty code to not include plot for inverse shear at Ar=3
+        if (i==3) and (na):
+            axes[0, i].annotate('NA' , xy=(0.5, 0.5),
+                xycoords='axes fraction', size=14, ha='center', va='center',
+                bbox=dict(ec='w', fc='w', alpha=0.0))
+            axes[1, i].annotate('NA' , xy=(0.5, 0.5),
+                xycoords='axes fraction', size=14, ha='center', va='center',
+                bbox=dict(ec='w', fc='w', alpha=0.0))
+            continue
+
         ax = axes[0, i]
         hexPlot = ax.hexbin(azim1[key], td1[key][:, 0], cmap='Blues', **hexbinConfig)
         ax.plot(x, key*y, '--r', lw=1.5)
@@ -103,7 +113,7 @@ def _run(dlc1, dlc2, wsp=20, SAVE=None):
                 xycoords='axes fraction', size=10, ha='center', va='bottom',
                 bbox=dict(ec='w', fc='w', alpha=0.0))
 
-    axes[-1, -1].legend(loc='upper left', bbox_to_anchor=(0.4, -0.1))
+    axes[-1, -2].legend(loc='upper left', bbox_to_anchor=(1.4, -0.1))
 
 
 
