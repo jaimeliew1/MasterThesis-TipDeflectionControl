@@ -59,19 +59,21 @@ def formatViolinplot(parts, color=None):
 
 
 
-def get_pr_data_from_sim(sim):
-    # Pitch rate of each blade [deg/s]
-    channels = {'PR1':  5, 'PR2':  7, 'PR3':  9}
-    pr = []
+def get_pa_data_from_sim(sim):
+     #pitch angle blade 1 [deg]
+    channels = {'pitch1': 4, 'pitch2':6, 'pitch3':8}
+    pa = []
     for seed in sim:
         if seed.data.shutdown:
             continue
         data = seed.loadFromSel(channels=channels)
         for key in channels.keys():
-            pr += list(data[key])
-    if len(pr) == 0:
-        pr = [0]
-    return pr
+            pa += list(data[key])
+    if len(pa) == 0:
+        pa = [0]
+    else:
+        pa = np.array(pa) - np.mean(pa)
+    return pa
 
 
 
@@ -91,40 +93,38 @@ def run(dlcs, SAVE=None):
 def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
     labels = ['no\nIPC', '$0m$', '$1m$', '$2m$', '$3m$']
 
-    pr_noipc = get_pr_data_from_sim(dlc_noipc(wsp=wsp)[0])
+    pa_noipc = get_pa_data_from_sim(dlc_noipc(wsp=wsp)[0])
 
     # ipc04 tower clearances
     c = 'ipc04'
-    pr1 = {0:get_pr_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
+    pa1 = {0:get_pa_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
     for a in [1, 2, 3]:
-        pr1[a] = get_pr_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
+        pa1[a] = get_pa_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
 
     # ipc04 tower clearances
     c = 'ipc07'
-    pr2 = {0:get_pr_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
+    pa2 = {0:get_pa_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
     for a in [1, 2, 3]:
-        pr2[a] = get_pr_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
+        pa2[a] = get_pa_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
 
 
     # plot setup
     plt.figure(figsize=[4, 4])
-    #plt.xlim(7, 24)
-    plt.axvline(-10, lw=1, c='k', ls='--')
-    plt.axvline(10, lw=1, c='k', ls='--')
+
     plt.yticks(np.arange(5), labels)
-    plt.xlabel('Blade Pitch Rate $[^o/s]$')
+    plt.xlabel('Blade Pitch Angle Purturbation $[^o]$')
     plt.ylabel('Tip Tracking Amplitude $[m]$')
 
 
-    parts = plt.violinplot([pr_noipc], positions=[0], **vp_settings)
+    parts = plt.violinplot([pa_noipc], positions=[0], **vp_settings)
     formatViolinplot(parts, color = 'tab:orange')
 
     positions = np.array([1, 2, 3, 4]) - 0.1
-    parts = plt.violinplot(pr1.values(), positions=positions, **vp_settings)
+    parts = plt.violinplot(pa1.values(), positions=positions, **vp_settings)
     formatViolinplot(parts, colors[0])
 
     positions = np.array([1, 2, 3, 4]) + 0.1
-    parts = plt.violinplot(pr2.values(), positions=positions, **vp_settings)
+    parts = plt.violinplot(pa2.values(), positions=positions, **vp_settings)
     formatViolinplot(parts, colors[-1])
 
     # make proxy object for legend as violinplots do not support legends.
@@ -136,13 +136,6 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
-
-
-    #table(X, SAVE)
-
-
-
-
 
 
 
