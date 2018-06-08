@@ -41,12 +41,12 @@ def run(dlcs, SAVE=None):
 
     plt.figure(figsize=[8, 4])
     plt.xlabel('Time [s]')
-    plt.ylabel('Minimum tower clearance [m]')
+    plt.ylabel('Tower clearance [m]')
     start = 100#340
-    plt.xlim(start, start + 100)
-    plt.plot(t, tcl)
-    plt.plot(T, valleys, 'xr')
-
+    plt.xlim(start, start + 50)
+    plt.plot(t, tcl.values)
+    plt.plot(T, valleys, 'xr', label='Minimum tower clearance')
+    plt.legend(loc='upper center')
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
