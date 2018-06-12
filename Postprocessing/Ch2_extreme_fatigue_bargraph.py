@@ -28,7 +28,8 @@ def lifetimeReq(sims_, key='RBM'):
 
 
 def run(dlc, dlc_noipc, SAVE=False):
-
+    dlc_noipc = PostProc.DLC('dlc13_0')
+    dlc = PostProc.DLC('dlc13_1')
     C = ['ipcpi', 'ipc04', 'ipc07']
     keys = ['RBMf', 'MBt', 'MBy']
     titles = ['Blade (flapwise)',

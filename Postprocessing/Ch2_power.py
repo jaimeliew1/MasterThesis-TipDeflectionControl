@@ -9,6 +9,7 @@ This script analyses: Power Output
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from JaimesThesisModule import PostProc
 
 
@@ -37,12 +38,12 @@ def get_pelec_data_from_sim(sim):
     x = []
     for seed in sim:
         data = seed.loadFromSel(channels={'Pelec':103})
-        x += list(data['Pelec'].values)
+        x += list(data['Pelec'].values/1e6)
     return x
 
 
 
-def run(dlc, dlc_noipc, c, SAVE=None):
+def run(dlc, dlc_noipc, c='ipc07', SAVE=None):
 
     WSP = np.arange(4, 27, 2)
     X = {}
@@ -58,9 +59,10 @@ def run(dlc, dlc_noipc, c, SAVE=None):
         X1[wsp] = get_pelec_data_from_sim(sim)
 
 
-    plt.figure(figsize=[7,5])
+    plt.figure(figsize=[6,4])
+    plt.xticks(np.arange(4, 27, 4))
     plt.xlabel('Wind Speed [m/s]')
-    plt.ylabel('$P_{elec}$ [W]')
+    plt.ylabel('Electrical Power Output [MW]')
     dx = 0.3
     parts = plt.violinplot(X.values(), positions=np.array(list(X.keys())) - dx, **vp_settings)
     formatViolinplot(parts, colors[1])
@@ -68,16 +70,24 @@ def run(dlc, dlc_noipc, c, SAVE=None):
     parts = plt.violinplot(X1.values(), positions=np.array(list(X1.keys())) + dx, **vp_settings)
     formatViolinplot(parts, colors[-1])
 
+    a1 = mpatches.Patch(fc=colors[1], ec='k', alpha=0.7, label='No IPC')
+    a2 = mpatches.Patch(fc=colors[-1], ec='k', alpha=0.7, label='IPC ($C_{2}$)')
 
+    plt.legend(handles = [a1, a2], loc='lower right')
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
 
-    return X
+
+    # print LaTeX table
+    for wsp in WSP:
+        print(f'\multirow{{2}}{{*}} {{{wsp}}} & No IPC &{np.mean(X[wsp]):2.3f} &  {np.std(X[wsp]):2.3f} \\\\')
+        print(f'& IPC ($C_2$) & {np.mean(X1[wsp]):2.3f} &  {np.std(X1[wsp]):2.3f} \\\\ \\hline')
+    return X, X1
 
 
 if __name__ is '__main__':
     dlc_noipc = PostProc.DLC('dlc11_0')
     dlc = PostProc.DLC('dlc11_1')
 
-    X = run(dlc, dlc_noipc, 'ipc04', SAVE=False)
+    X, X1 = run(dlc, dlc_noipc, 'ipc04', SAVE=False)

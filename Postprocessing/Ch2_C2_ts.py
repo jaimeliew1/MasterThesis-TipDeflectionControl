@@ -12,7 +12,7 @@ from JaimesThesisModule import PostProc
 
 def run(dlc, dlc_noipc, SAVE=None):
 
-    wsp=20
+    wsp=18
     channels = {'t'         : 1,
                 'Azim'      : 2,
                 'RBM1'      : 26,

@@ -49,8 +49,8 @@ def run(dlc=None, dlc_noipc=None, SAVE=None):
 
 
     ax.axhline(0, lw=1, c='0.8', ls='-')
-    ax.plot(f, mag, label='$S(C_{PI})$')
-    ax.plot(f, actualMag, '--', label='Actual $S(C_{PI})$')
+    ax.plot(f, mag, label='$S(C_{PI})$, linear model')
+    ax.plot(f, actualMag, '--', label='$S(C_{PI})$, HAWC2 model')
 
 
 
