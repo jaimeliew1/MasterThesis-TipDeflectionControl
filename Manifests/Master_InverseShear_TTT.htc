@@ -464,7 +464,7 @@ begin dll;
       constant 73     0.0 ; Max low-pass filtered tower top acceleration level before initiating safety system alarm (shut-down) [m/s^2] (Default 1.1 x input 46 used if zero)
       constant 74     0.0 ; Time constant of 1st order filter on tower top acceleration [1/1P] (Default 1 used if zero)
 ;     Pitch deviation monitor parameters
-      constant 75 1005020 ; Parameters for pitch deviation monitoring. The format is 1,nnn,mmm
+      constant 75 0005020 ; Parameters for pitch deviation monitoring. The format is 1,nnn,mmm
                           ; where 'nnn' [s] is the period of the moving average and 'mmm' is threshold of the deviation [0.1 deg] (functionality is inactive if value $<$ 1,000,000)
 ;     Gear ratio
       constant 76     0.0 ; Gear ratio used for the calculation of the LSS rotational speeds and the HSS generator torque reference [-] (Default 1 if zero)
