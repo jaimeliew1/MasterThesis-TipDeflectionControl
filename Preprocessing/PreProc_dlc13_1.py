@@ -38,5 +38,5 @@ manifest.printOverview()
 
 manifest.checkTemplate('../Manifests/Master.htc')
 manifest.missingRes()
-#manifest.save_csv()
-#manifest.generate_htc_files('../Manifests/Master.htc', overwrite=False)
+manifest.save_csv()
+manifest.generate_htc_files('../Manifests/Master.htc', overwrite=True)
