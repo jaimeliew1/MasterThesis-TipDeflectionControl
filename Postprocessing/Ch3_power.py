@@ -43,7 +43,9 @@ def get_pelec_data_from_sim(sim):
 
 
 
-def run(dlc, dlc_noipc, c='ipc07', SAVE=None):
+def run(dlcs, c='ipc07', SAVE=None):
+    dlc_noipc = dlcs['dlc15_0']
+    dlc = dlcs['dlc15_2']
 
     WSP = np.arange(4, 27, 2)
     X = {}
@@ -55,7 +57,7 @@ def run(dlc, dlc_noipc, c='ipc07', SAVE=None):
     # control case
     X1 = {}
     for wsp in WSP:
-        sim = dlc(wsp=wsp, controller=c)[0]
+        sim = dlc(wsp=wsp, controller=c, _amp=4)[0]
         X1[wsp] = get_pelec_data_from_sim(sim)
 
 
@@ -87,7 +89,11 @@ def run(dlc, dlc_noipc, c='ipc07', SAVE=None):
 
 
 if __name__ is '__main__':
-    dlc_noipc = PostProc.DLC('dlc15_0')
-    dlc = PostProc.DLC('dlc15_2')
+    dlcs = {'dlc11_0':PostProc.DLC('dlc11_0'),
+    'dlc11_1':PostProc.DLC('dlc11_1'),
+    'dlc11_3':PostProc.DLC('dlc11_3'),
+    'dlc15_0':PostProc.DLC('dlc15_0'),
+    'dlc15_1':PostProc.DLC('dlc15_1'),
+    'dlc15_2':PostProc.DLC('dlc15_2')}
 
-    X, X1 = run(dlc, dlc_noipc, 'ipc07', SAVE=False)
+    X, X1 = run(dlcs, 'ipc07', SAVE=False)

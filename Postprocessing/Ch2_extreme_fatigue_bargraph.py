@@ -84,10 +84,13 @@ def run(dlc, dlc_noipc, SAVE=False):
     f = open('../Figures/Tables/Ch2_extreme_Reqlt.txt', 'w')
     for i, row in enumerate(keys):
         leqref = lifetimeReq(dlc_noipc.Sims, row)
+        leq0 = lifetimeReq(dlc(controller='ipcpi'), row)
         leq1 = lifetimeReq(dlc(controller='ipc04'), row)
         leq2 = lifetimeReq(dlc(controller='ipc07'), row)
 
         line = tableRows[i]
+        line += '& {:2.0f} & {:+2.2f}'.format(
+                        leq0, (leq0/leqref - 1)*100)
         line += '& {:2.0f} & {:+2.2f}'.format(
                         leq1, (leq1/leqref - 1)*100)
         line += '& {:2.0f} & {:+2.2f} \\\\\n'.format(
