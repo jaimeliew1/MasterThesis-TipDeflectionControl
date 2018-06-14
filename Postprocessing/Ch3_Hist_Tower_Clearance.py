@@ -23,7 +23,7 @@ def lowerPeaks(X):
 
 
 
-def run(dlcs, wsp=18, c='ipc04', maxAmp=3, SAVE=False):
+def run(dlcs, wsp=18, c='ipc04', maxAmp=4, SAVE=False):
     dlc_noipc = dlcs['dlc11_0']
     dlc = dlcs['dlc11_1']
     dlc2 = dlcs['dlc11_3']

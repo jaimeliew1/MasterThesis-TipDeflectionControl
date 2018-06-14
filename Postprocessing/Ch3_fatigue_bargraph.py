@@ -19,9 +19,9 @@ def run(dlcs, SAVE=None):
 
 
 def plot_bars_on_ax(ax, dlc_noipc, dlc, dlc2, c, key):
-    A = [1, 2, 3]
+    A = [1, 2, 3, 4]
     WSP = np.arange(4, 27, 4)
-    labels = ['$A_r=1$', '$A_r=2$', '$A_r=3$']
+    labels = ['$A_r=1$', '$A_r=2$', '$A_r=3$', '$A_r=4$']
     Req_ol, Req_0, Req_cl = [0]*len(WSP), [0]*len(WSP), np.zeros([len(A), len(WSP)])
 
     for i, wsp in enumerate(WSP):
@@ -37,8 +37,8 @@ def plot_bars_on_ax(ax, dlc_noipc, dlc, dlc2, c, key):
 # bar graph
     width = 3/(len(A) + 2)
     #http://colorbrewer2.org/#type=sequential&scheme=YlGnBu&n=4
-    colors = ['#ffffcc','#a1dab4','#41b6c4','#225ea8']
-
+    #colors = ['#ffffcc','#a1dab4','#41b6c4','#225ea8']
+    colors = ['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']
 
     ax.bar(WSP, Req_ol, width, label = 'No control', hatch='\\\\', fc='0.8', ec='0')
     ax.bar(WSP + width, Req_0, width, label = '$A_r=0$', fc=colors[0], ec='0')
@@ -80,7 +80,7 @@ def _run(dlc_noipc, dlc, dlc2, SAVE=False):
 # labels
     fig.text(0.06, 0.5, 'Equivalent Bending Moment [kNm]', va='center', rotation='vertical')
     fig.text(0.5, 0.05, 'Wind Speed [m/s]', ha='center', rotation='horizontal')
-    axes.ravel()[1].legend(ncol=5,bbox_to_anchor=(1.4, 1.2))
+    axes.ravel()[1].legend(ncol=6,bbox_to_anchor=(1.8, 1.3))
     axes[0, -1].text(1.01, 0.5, '$C_{f1p}$', size=12, rotation=-90,  transform=axes[0, -1].transAxes)
     axes[1, -1].text(1.01, 0.5, '$C_{2}$', size=12, rotation=-90,  transform=axes[1, -1].transAxes)
     if SAVE:

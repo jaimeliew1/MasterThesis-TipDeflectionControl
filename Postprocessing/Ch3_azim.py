@@ -90,14 +90,14 @@ def _run(dlc1, dlc2, wsp=20, SAVE=None, na=False):
     y = -np.cos(np.deg2rad(x))
     for i, key in enumerate(azim1.keys()):
         # dirty code to not include plot for inverse shear at Ar=3
-        if (i==3) and (na):
-            axes[0, i].annotate('NA' , xy=(0.5, 0.5),
-                xycoords='axes fraction', size=14, ha='center', va='center',
-                bbox=dict(ec='w', fc='w', alpha=0.0))
-            axes[1, i].annotate('NA' , xy=(0.5, 0.5),
-                xycoords='axes fraction', size=14, ha='center', va='center',
-                bbox=dict(ec='w', fc='w', alpha=0.0))
-            continue
+#        if (i==3) and (na):
+#            axes[0, i].annotate('NA' , xy=(0.5, 0.5),
+#                xycoords='axes fraction', size=14, ha='center', va='center',
+#                bbox=dict(ec='w', fc='w', alpha=0.0))
+#            axes[1, i].annotate('NA' , xy=(0.5, 0.5),
+#                xycoords='axes fraction', size=14, ha='center', va='center',
+#                bbox=dict(ec='w', fc='w', alpha=0.0))
+#            continue
 
         ax = axes[0, i]
         hexPlot = ax.hexbin(azim1[key], td1[key][:, 0], cmap='Blues', **hexbinConfig)
