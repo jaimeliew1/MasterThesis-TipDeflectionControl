@@ -199,19 +199,23 @@ def plot_bandpass():
     return fig, ax
 
 
+def run(dlc_noipc, SAVE=None):
 
-if __name__ == '__main__':
+
     plotfuncs = [plot_leadcomp, plot_lowpass, plot_bandpass]
     fn = ['Ch1_leadcomp', 'Ch1_lowpass', 'ch1_bandpass']
 
-
-    plt.rc('text', usetex=True)
     for func, fn in zip(plotfuncs, fn):
         func()
-        plt.savefig(f'../Figures/Chapter_TheoreticalFramework/{fn}.png', dpi=200)
+        if SAVE:
+            plt.savefig(f'../Figures/Chapter_TheoreticalFramework/{fn}.png', dpi=200, bbox_inches='tight')
         plt.show(); print()
 
-    plt.rc('text', usetex=False)
+if __name__ == '__main__':
+    run(0, 0)
+
+
+
 
 
 
