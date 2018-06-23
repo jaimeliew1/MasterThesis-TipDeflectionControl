@@ -7,6 +7,24 @@ Created on Mon Apr 23 17:17:55 2018
 import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
+from Other.Weibull import wsp_probs
+
+
+def lifetimeReq(sims_, key='RBM'):
+    #wohler = Config.Config.wohler[key]
+    wohler = {'RBMf':10, 'RBMe':10, 'RBMt':10, 'MBt':4, 'MBy':4}
+    # Probability of each wind speed occuring
+    P = wsp_probs()
+    Y = 0
+    for sim in sims_:
+        wsp = sim.wsp
+        Y += float(sim.data[key]**wohler[key]*P[wsp])
+
+    Req_l = Y**(1/wohler[key])
+
+    return Req_l
+
+
 
 def run(dlcs, SAVE=None):
     if SAVE:
@@ -44,6 +62,9 @@ def plot_bars_on_ax(ax, dlc_noipc, dlc, dlc2, c, key):
     ax.bar(WSP + width, Req_0, width, label = '$A_r=0$', fc=colors[0], ec='0')
     for j, amp in enumerate(A):
         ax.bar(WSP + width*(j+2), Req_cl[j], width, label=labels[j], ec='0', fc = colors[j+1])
+
+
+
 
 
 
@@ -86,6 +107,30 @@ def _run(dlc_noipc, dlc, dlc2, SAVE=False):
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
     plt.show(); print()
+
+
+
+    # lifetime equivalent load table
+
+    tableRows = ['Blade (flap)', 'Main Bearing (tilt)', 'Main Bearing (yaw)']
+    #f = open('../Figures/Tables/Ch3_extreme_Reqlt.txt', 'w')
+    C = 'ipc07'
+    for i, row in enumerate(keys):
+        leqref = lifetimeReq(dlc_noipc.Sims, row)
+        leq0 = lifetimeReq(dlc(controller=C), row)
+        line = tableRows[i]
+        line += '& {:2.0f} & {:+2.2f}'.format(
+                        leq0, (leq0/leqref - 1)*100)
+        for amp in [1, 2, 3, 4]:
+            leq1 = lifetimeReq(dlc2(controller=C, _amp=amp), row)
+
+
+            line += '& {:2.0f} & {:+2.2f}'.format(
+                        leq1, (leq1/leqref - 1)*100)
+
+        #f.write(line)
+        print(line)
+    #f.close()
 
 
 

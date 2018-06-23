@@ -99,8 +99,8 @@ def run(dlcs, SAVE=None):
 
 
 
-def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
-    labels = ['no\nIPC', '$0m$', '$1m$', '$2m$', '$3m$']
+def _run(dlc_noipc, dlc1, dlc2, wsp=20, SAVE=None):
+    labels = ['no\nIPC', '$0m$', '$1m$', '$2m$', '$3m$', '$4m$']
 
     # no ipc case
     tcl_noipc = get_tcl_data_from_sim(dlc_noipc(wsp=wsp)[0])
@@ -108,19 +108,19 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
     # ipc04 tower clearances
     c = 'ipc04'
     tcl1 = {0:get_tcl_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
-    for a in [1, 2, 3]:
+    for a in [1, 2, 3, 4]:
         tcl1[a] = get_tcl_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
 
     # ipc04 tower clearances
     c = 'ipc07'
     tcl2 = {0:get_tcl_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
-    for a in [1, 2, 3]:
+    for a in [1, 2, 3, 4]:
         tcl2[a] = get_tcl_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
 
     # plot setup
     plt.figure(figsize=[4, 4])
     plt.xlim(7, 24)
-    plt.yticks(np.arange(5), labels)
+    plt.yticks(np.arange(6), labels)
     plt.xlabel('Minimum Tower Clearance $[m]$')
     plt.ylabel('Tip Tracking Amplitude $[m]$')
 
@@ -128,11 +128,11 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
     parts = plt.violinplot([tcl_noipc], positions=[0], **vp_settings)
     formatViolinplot(parts, color = 'tab:orange')
 
-    positions = np.array([1, 2, 3, 4]) - 0.1
+    positions = np.array([1, 2, 3, 4, 5]) - 0.1
     parts = plt.violinplot(tcl1.values(), positions=positions, **vp_settings)
     formatViolinplot(parts, colors[0])
 
-    positions = np.array([1, 2, 3, 4]) + 0.1
+    positions = np.array([1, 2, 3, 4, 5]) + 0.1
     parts = plt.violinplot(tcl2.values(), positions=positions, **vp_settings)
     formatViolinplot(parts, colors[-1])
 
