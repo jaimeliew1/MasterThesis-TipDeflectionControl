@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from JaimesThesisModule import PostProc
+from scipy.stats import gaussian_kde
 
 
 
@@ -22,11 +23,32 @@ def lowerPeaks(X):
 
 
 
+def kde_scipy(x, x_grid, bandwidth=0.2, **kwargs):
+    """Kernel Density Estimation with Scipy"""
+    # Note that scipy weights its bandwidth by the covariance of the
+    # input data.  To make the results comparable to the other methods,
+    # we divide the bandwidth by the sample standard deviation here.
+    #kde = gaussian_kde(x, bw_method=bandwidth / np.std(x, ddof=1), **kwargs)
+    kde = gaussian_kde(x, bw_method=bandwidth, **kwargs)
+    return kde.evaluate(x_grid)
 
-def run(dlcs, wsp=18, c='ipc04', maxAmp=4, SAVE=False):
-    dlc_noipc = dlcs['dlc11_0']
-    dlc = dlcs['dlc11_1']
-    dlc2 = dlcs['dlc11_3']
+
+
+
+def run(dlcs, SAVE=False):
+    if SAVE:
+        SAVE1 = SAVE[:-4] + '_normal.png'
+        SAVE2 = SAVE[:-4] + '_inverse.png'
+    else:
+        SAVE1 = SAVE2 = None
+    _run(dlcs['dlc11_0'], dlcs['dlc11_1'], dlcs['dlc11_3'], SAVE=SAVE1)
+    _run(dlcs['dlc15_0'], dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE2)
+
+
+
+
+def _run(dlc_noipc, dlc, dlc2, wsp=18, c='ipc07', maxAmp=4, SAVE=False):
+
     # Load data for no IPC
     Sims = dlc_noipc(wsp=wsp)[0]
     X_noipc = []
@@ -55,27 +77,29 @@ def run(dlcs, wsp=18, c='ipc04', maxAmp=4, SAVE=False):
 
 
     #%% Plot histogram of closest tower passes.
-    histProps = {'bins'     : 20,
-                 'alpha'    : 1,
-                 'normed'   : True,
-                 'histtype' : 'stepfilled',
-                 'edgecolor': 'k'}
+
 
     cmap = mpl.cm.get_cmap('Blues')
 
     fig, ax = plt.subplots()
 
+    x_ = np.linspace(9, 24, 100)
     for i, x in enumerate(X):
-        label = f'{i}m tracking'
-        c = cmap(i/(len(X)-1))
-        ax.hist(lowerPeaks(x), **histProps, facecolor=c, label=label)
-    histProps['alpha'] = 0.5
-    #ax.hist(lowerPeaks(X_noipc), **histProps, facecolor='tab:orange', label='no IPC')
+        label = f'$A_r={{{i}}}m$'
+        c = cmap((i+1)/(len(X)))
+        kde = kde_scipy(lowerPeaks(x), x_, bandwidth=0.15)
+        plt.plot(x_, kde, color=c, label=label)
+
+
+    kde = kde_scipy(lowerPeaks(X_noipc), x_, bandwidth=0.15)
+    plt.plot(x_, kde, '--', color='tab:orange', label='no IPC')
+
     # labels
     ax.set_xlabel('Minimum Passing Blade-Tower Clearance [m]')
     ax.set_ylabel('Probability [-]')
 
     # ticks
+    ax.set_xlim(9, 24)
     start, stop = ax.get_xlim()
     ax.set_xticks(range(int(start), int(stop)+1, 1), minor=True)
     ax.set_yticks(np.arange(0, 0.41, 0.1))
@@ -95,8 +119,11 @@ if __name__ is '__main__':
     'dlc11_0':PostProc.DLC('dlc11_0'),
     'dlc11_1':PostProc.DLC('dlc11_1'),
     'dlc11_3':PostProc.DLC('dlc11_3'),
-    }
-    run(dlcs, wsp=18, c='ipc04', maxAmp=4, SAVE=False)
+    'dlc15_0':PostProc.DLC('dlc15_0'),
+    'dlc15_1':PostProc.DLC('dlc15_1'),
+    'dlc15_2':PostProc.DLC('dlc15_2')}
+
+    run(dlcs, SAVE=False)
 
 
 

@@ -105,13 +105,13 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=20, SAVE=None):
     # no ipc case
     tcl_noipc = get_tcl_data_from_sim(dlc_noipc(wsp=wsp)[0])
 
-    # ipc04 tower clearances
-    c = 'ipc04'
-    tcl1 = {0:get_tcl_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
-    for a in [1, 2, 3, 4]:
-        tcl1[a] = get_tcl_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
+#    # ipc04 tower clearances
+#    c = 'ipc04'
+#    tcl1 = {0:get_tcl_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
+#    for a in [1, 2, 3, 4]:
+#        tcl1[a] = get_tcl_data_from_sim(dlc2(controller=c, wsp=wsp, _amp=a)[0])
 
-    # ipc04 tower clearances
+    # ipc07 tower clearances
     c = 'ipc07'
     tcl2 = {0:get_tcl_data_from_sim(dlc1(controller=c, wsp=wsp)[0])}
     for a in [1, 2, 3, 4]:
@@ -128,19 +128,19 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=20, SAVE=None):
     parts = plt.violinplot([tcl_noipc], positions=[0], **vp_settings)
     formatViolinplot(parts, color = 'tab:orange')
 
-    positions = np.array([1, 2, 3, 4, 5]) - 0.1
-    parts = plt.violinplot(tcl1.values(), positions=positions, **vp_settings)
-    formatViolinplot(parts, colors[0])
+#    positions = np.array([1, 2, 3, 4, 5]) - 0.1
+#    parts = plt.violinplot(tcl1.values(), positions=positions, **vp_settings)
+#    formatViolinplot(parts, colors[0])
 
-    positions = np.array([1, 2, 3, 4, 5]) + 0.1
+    positions = np.array([1, 2, 3, 4, 5]) #### + 0.1
     parts = plt.violinplot(tcl2.values(), positions=positions, **vp_settings)
     formatViolinplot(parts, colors[-1])
 
     # make proxy object for legend as violinplots do not support legends.
-    a1 = mpatches.Patch(fc='tab:orange', ec='k', alpha=0.7, label='No IPC')
-    a2 = mpatches.Patch(fc=colors[0], ec='k', alpha=0.7, label='$C_{f1p}$')
-    a3 = mpatches.Patch(fc=colors[-1], ec='k', alpha=0.7, label='$C_{2}$')
-    plt.legend(handles = [a1, a2, a3], ncol=3, bbox_to_anchor=(0.98, 1.15))
+    #a1 = mpatches.Patch(fc='tab:orange', ec='k', alpha=0.7, label='No IPC')
+    #a2 = mpatches.Patch(fc=colors[0], ec='k', alpha=0.7, label='$C_{f1p}$')
+    #a3 = mpatches.Patch(fc=colors[-1], ec='k', alpha=0.7, label='$C_{2}$')
+    #plt.legend(handles = [a1, a3], ncol=3, bbox_to_anchor=(0.98, 1.15))
 
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')

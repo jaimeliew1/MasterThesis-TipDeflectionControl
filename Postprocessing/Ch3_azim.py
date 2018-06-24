@@ -27,40 +27,40 @@ def get_TD_azim_from_sim(sim):
 
 
 def run(dlcs, SAVE=None):
-    if SAVE:
-        SAVE1 = SAVE[:-4] + '_normal.png'
-        SAVE2 = SAVE[:-4] + '_inverse.png'
-    else:
-        SAVE1 = SAVE2 = None
+#    if SAVE:
+#        SAVE1 = SAVE[:-4] + '_normal.png'
+#        SAVE2 = SAVE[:-4] + '_inverse.png'
+#    else:
+#        SAVE1 = SAVE2 = None
 
-    _run(dlcs['dlc11_1'], dlcs['dlc11_3'], SAVE=SAVE1)
-    _run(dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE2, na=True)
+#    _run(dlcs['dlc11_1'], dlcs['dlc11_3'], SAVE=SAVE1)
+#    _run(dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE2)
+    _run(dlcs['dlc11_1'], dlcs['dlc11_3'], dlcs['dlc15_1'], dlcs['dlc15_2'], SAVE=SAVE)
 
+def _run(dlc1, dlc2, dlc3, dlc4, wsp=20, SAVE=None):
 
-def _run(dlc1, dlc2, wsp=20, SAVE=None, na=False):
-
-    # First row data (ipc04)
+    # First row data (ipc07, Normal shear)
     azim1, td1 = {}, {}
     # get data for Ar = 0
-    sim = dlc1(wsp=wsp, controller='ipc04')[0]
+    sim = dlc1(wsp=wsp, controller='ipc07')[0]
     azim1[0], td1[0] = get_TD_azim_from_sim(sim)
 
     # get data for Ar = 1, 2, 3
     for amp in [1, 2, 3]:
-        sim = dlc2(wsp=wsp, _amp=amp, controller='ipc04')[0]
+        sim = dlc2(wsp=wsp, _amp=amp, controller='ipc07')[0]
         azim1[amp], td1[amp] = get_TD_azim_from_sim(sim)
 
 
 
-    # Second row data (ipc07)
+    # Second row data (ipc07, Inverse shear)
     azim2, td2 = {}, {}
     # get data for Ar = 0
-    sim = dlc1(wsp=wsp, controller='ipc07')[0]
+    sim = dlc3(wsp=wsp, controller='ipc07')[0]
     azim2[0], td2[0] = get_TD_azim_from_sim(sim)
 
     # get data for Ar = 1, 2, 3
     for amp in [1, 2, 3]:
-        sim = dlc2(wsp=wsp, _amp=amp, controller='ipc07')[0]
+        sim = dlc4(wsp=wsp, _amp=amp, controller='ipc07')[0]
         azim2[amp], td2[amp] = get_TD_azim_from_sim(sim)
 
 
@@ -89,28 +89,20 @@ def _run(dlc1, dlc2, wsp=20, SAVE=None, na=False):
     x = np.linspace(0, 360, 360)
     y = -np.cos(np.deg2rad(x))
     for i, key in enumerate(azim1.keys()):
-        # dirty code to not include plot for inverse shear at Ar=3
-#        if (i==3) and (na):
-#            axes[0, i].annotate('NA' , xy=(0.5, 0.5),
-#                xycoords='axes fraction', size=14, ha='center', va='center',
-#                bbox=dict(ec='w', fc='w', alpha=0.0))
-#            axes[1, i].annotate('NA' , xy=(0.5, 0.5),
-#                xycoords='axes fraction', size=14, ha='center', va='center',
-#                bbox=dict(ec='w', fc='w', alpha=0.0))
-#            continue
+
 
         ax = axes[0, i]
         hexPlot = ax.hexbin(azim1[key], td1[key][:, 0], cmap='Blues', **hexbinConfig)
         ax.plot(x, key*y, '--r', lw=1.5)
-        ax.annotate('$C_{f1p}$ ' + f'$A_r={i}$' , xy=(0.5, 0.01),
-                xycoords='axes fraction', size=10, ha='center', va='bottom',
+        ax.annotate('Normal shear\n' + f'$A_r={i}$' , xy=(0.5, 0.01),
+                xycoords='axes fraction', size=8, ha='center', va='bottom',
                 bbox=dict(ec='w', fc='w', alpha=0.0))
 
         ax = axes[1, i]
         hexPlot = ax.hexbin(azim2[key], td2[key][:, 0], cmap='Blues', **hexbinConfig)
         ax.plot(x, key*y, '--r', lw=1.5, label= 'Reference')
-        ax.annotate('$C_{2}$, ' + f'$A_r={i}$' , xy=(0.5, 0.01),
-                xycoords='axes fraction', size=10, ha='center', va='bottom',
+        ax.annotate('Inverse shear\n' + f'$A_r={i}$' , xy=(0.5, 0.01),
+                xycoords='axes fraction', size=8, ha='center', va='bottom',
                 bbox=dict(ec='w', fc='w', alpha=0.0))
 
     axes[-1, -2].legend(loc='upper left', bbox_to_anchor=(1.4, -0.1))
