@@ -18,6 +18,15 @@ def binCyclicalData(T, Y, width=1):
     return dat
 
 
+def cyclicalMinMax(X, Y):
+    hist = binCyclicalData(X, Y)
+    azim = list(hist.keys())
+    Max = [np.max(v) for v in hist.values()]
+    Min = [np.min(v) for v in hist.values()]
+
+    return azim, Min, Max
+
+
 
 def TTTplot(ax, X, Y):
 
@@ -28,14 +37,11 @@ def TTTplot(ax, X, Y):
                     'vmin':0,
                     'vmax':1300}
     ax.set_ylim(-10, 10)
-    hist = binCyclicalData(X, Y)
-    bins = list(hist.keys())
-    Max = [np.max(v) for v in hist.values()]
-    Min = [np.min(v) for v in hist.values()]
+    azim, Min, Max = cyclicalMinMax(X, Y)
 
     Hexplot = ax.hexbin(X, Y, cmap='Blues', **hexbinConfig)
-    ax.plot(bins, Max, '--k', lw=1)
-    ax.plot(bins, Min, '--k', lw=1)
+    ax.plot(azim, Max, '--k', lw=1)
+    ax.plot(azim, Min, '--k', lw=1)
     ax.set_xticks(range(0, 361, 90))
     ax.set_yticks(range(-8, 9, 4))
     ax.grid()

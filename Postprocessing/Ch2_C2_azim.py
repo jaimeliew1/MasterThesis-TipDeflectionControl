@@ -9,6 +9,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 from JaimesThesisModule import PostProc
 
+def binCyclicalData(T, Y, width=1):
+
+    X = np.arange(0, 360, width)
+    dat = {k:[] for k in X}
+    for t, y in zip(T, Y):
+        Bin = 0
+        if t%360 != 0:
+            Bin =X[X<t%360][-1]
+        dat[Bin].append(y)
+    return dat
+
+
+def cyclicalMinMax(X, Y):
+    hist = binCyclicalData(X, Y)
+    azim = list(hist.keys())
+    Max = [np.max(v) for v in hist.values()]
+    Min = [np.min(v) for v in hist.values()]
+
+    return azim, Min, Max
+
+
+
 
 def run(dlc, dlc_noipc, SAVE=None):
 
@@ -77,7 +99,15 @@ def run(dlc, dlc_noipc, SAVE=None):
     # Plotting
     for i in [0,1,2]: # for each blade
         ax[i, 0].hexbin(azim, td[:, i], cmap='Blues', **hexbinConfig)
+        Azim_mm, Min, Max = cyclicalMinMax(azim, td[:, i])
+        ax[i, 0].plot(Azim_mm, Min, '--k', lw=1)
+        ax[i, 0].plot(Azim_mm, Max, '--k', lw=1)
+
         ax[i, 1].hexbin(azim1, td1[:,i], cmap='Blues',** hexbinConfig)
+        Azim_mm, Min, Max = cyclicalMinMax(azim1, td1[:, i])
+        ax[i, 1].plot(Azim_mm, Min, '--k', lw=1, label='Min/Max')
+        ax[i, 1].plot(Azim_mm, Max, '--k', lw=1)
+
         ax[i,0].autoscale(axis='x')
         ax[i,1].autoscale(axis='x')
 
@@ -88,6 +118,7 @@ def run(dlc, dlc_noipc, SAVE=None):
     ax[0, 0].set_title('Without IPC')
     ax[0, 1].set_title('With IPC')
 
+    ax[2, 1].legend()
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
 

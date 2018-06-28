@@ -26,6 +26,29 @@ def get_TD_azim_from_sim(sim):
 
 
 
+def binCyclicalData(T, Y, width=10):
+
+    X = np.arange(0, 360, width)
+    dat = {k:[] for k in X}
+    for t, y in zip(T, Y):
+        Bin = 0
+        if t%360 != 0:
+            Bin =X[X<t%360][-1]
+        dat[Bin].append(y)
+    return dat
+
+
+def cyclicalMinMax(X, Y):
+    hist = binCyclicalData(X, Y)
+    azim = list(hist.keys())
+    Max = [np.max(v) for v in hist.values()]
+    Min = [np.min(v) for v in hist.values()]
+
+    return azim, Min, Max
+
+
+
+
 def run(dlcs, SAVE=None):
 #    if SAVE:
 #        SAVE1 = SAVE[:-4] + '_normal.png'
@@ -65,7 +88,7 @@ def _run(dlc1, dlc2, dlc3, dlc4, wsp=20, SAVE=None):
 
 
     # Set up plot
-    fig, axes = plt.subplots(2, 4, sharey=True, sharex=True, figsize=[6, 4])
+    fig, axes = plt.subplots(2, 4, sharey=True, sharex=True, figsize=[6.5, 4])
     fig.subplots_adjust(bottom=0.09, wspace=0.05, hspace=0.05)
     axes[0, 0].set_ylim(-6, 6)
     axes[0, 0].set_xticks([0, 120, 240])
@@ -93,20 +116,28 @@ def _run(dlc1, dlc2, dlc3, dlc4, wsp=20, SAVE=None):
 
         ax = axes[0, i]
         hexPlot = ax.hexbin(azim1[key], td1[key][:, 0], cmap='Blues', **hexbinConfig)
-        ax.plot(x, key*y, '--r', lw=1.5)
+
+        Azim, Min, Max = cyclicalMinMax(azim1[key], td1[key][:, 0])
+        ax.plot(Azim, Max, '--k', lw=1, label= 'Min/Max')
+        ax.plot(Azim, Min, '--k', lw=1)
+        ax.plot(x, key*y, '--r', lw=1.5, label= 'Reference')
         ax.annotate('Normal shear\n' + f'$A_r={i}$' , xy=(0.5, 0.01),
                 xycoords='axes fraction', size=8, ha='center', va='bottom',
                 bbox=dict(ec='w', fc='w', alpha=0.0))
 
         ax = axes[1, i]
         hexPlot = ax.hexbin(azim2[key], td2[key][:, 0], cmap='Blues', **hexbinConfig)
+
+        Azim, Min, Max = cyclicalMinMax(azim2[key], td2[key][:, 0])
+        ax.plot(Azim, Max, '--k', lw=1)
+        ax.plot(Azim, Min, '--k', lw=1)
         ax.plot(x, key*y, '--r', lw=1.5, label= 'Reference')
         ax.annotate('Inverse shear\n' + f'$A_r={i}$' , xy=(0.5, 0.01),
                 xycoords='axes fraction', size=8, ha='center', va='bottom',
                 bbox=dict(ec='w', fc='w', alpha=0.0))
 
-    axes[-1, -2].legend(loc='upper left', bbox_to_anchor=(1.4, -0.1))
-
+    #axes[-1, -2].legend(loc='upper left', bbox_to_anchor=(1.4, -0.1))
+    axes[0, 0].legend(loc='upper left', fontsize=7, numpoints=10)
 
 
     N = len(azim1[0])
