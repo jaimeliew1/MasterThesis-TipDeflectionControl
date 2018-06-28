@@ -48,7 +48,7 @@ def run(dlc, dlc_noipc, SAVE=None):
 
     ax.set_xlabel('Time [s]')
     ax.set_ylabel('Tip Deflection Purturbation [m]')
-    ax.legend(['Without Control', 'With Control'], ncol=2)
+    ax.legend(['No IPC', 'With IPC'], ncol=2)
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
 

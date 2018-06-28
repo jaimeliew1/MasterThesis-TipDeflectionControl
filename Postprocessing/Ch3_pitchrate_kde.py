@@ -14,7 +14,9 @@ def kde_scipy(x, x_grid, bandwidth=0.2, **kwargs):
     # we divide the bandwidth by the sample standard deviation here.
     #kde = gaussian_kde(x, bw_method=bandwidth / np.std(x, ddof=1), **kwargs)
     kde = gaussian_kde(x, bw_method=bandwidth, **kwargs)
+    #print(kde.integrate_box_1d(10, 1000) + kde.integrate_box_1d(-1000, -10))
     return kde.evaluate(x_grid)
+
 
 
 
@@ -90,7 +92,6 @@ def run(dlcs, SAVE=None):
 
 
 def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
-    labels = ['no\nIPC', '$0m$', '$1m$', '$2m$', '$3m$', '$4m$']
 
     pr_noipc = get_pr_data_from_sim(dlc_noipc(wsp=wsp)[0])
 
@@ -112,12 +113,13 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
     x_ = np.linspace(-15, 15, 100)
     plt.axvline(-10, ls='--', c='k', lw=1)
     plt.axvline(10, ls='--', c='k', lw=1)
-    kde = kde_scipy(pr_noipc, x_, bandwidth=0.15)
+    kde = kde_scipy(pr_noipc, x_, bandwidth=0.10)
     plt.plot(x_, kde, '--', color='tab:orange', label='no IPC')
 
     for i, x in enumerate(pr2.values()):
-        label = f'{i}m tracking'
+        label = f'$A_r = {i}m$'
         c = cmap((i+2)/6)
+        #print(i)
         kde = kde_scipy(x, x_, bandwidth=0.10)
         plt.plot(x_, kde, color=c, label=label)
 

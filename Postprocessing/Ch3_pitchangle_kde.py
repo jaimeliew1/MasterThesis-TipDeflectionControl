@@ -118,7 +118,7 @@ def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
 
 
     for i, x in enumerate(pr2.values()):
-        label = f'{i}m tracking'
+        label = f'$A_r = {i}m$'
         c = cmap((i+2)/6)
         kde = kde_scipy(x, x_, bandwidth=0.10)
         plt.plot(x_, kde, color=c, label=label)

@@ -89,7 +89,7 @@ def run(dlc, dlc_noipc, SAVE=False):
 
 
         # annotate
-        ax.annotate(f'WSP=${wsp}m/s$' , xy=(0.5, 0.96), xycoords='axes fraction',
+        ax.annotate(f'U=${wsp}m/s$' , xy=(0.5, 0.96), xycoords='axes fraction',
                     size=10, ha='center', va='top',
                     bbox=dict(boxstyle='round', fc='w', alpha=0.0))
     # axis

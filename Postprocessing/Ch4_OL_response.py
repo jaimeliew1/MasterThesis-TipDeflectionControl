@@ -65,7 +65,7 @@ def run(SAVE=False):
         f, Y = OLFreqResp(wsp, dlc_noipc)
         f_, Y_ = OLFreqResp(wsp, dlc_noipc, smooth=True)
         ax.plot(f, Y, label='Mean Fourier Transform')
-        ax.plot(f_, Y_, label='Binned Mean Fourier Transform')
+        ax.plot(f_, Y_, label='Smoothed Fourier Transform')
     # axis
         ax.set_xscale('log')
         ax.set_xlim(0.05, 1.5)
@@ -76,7 +76,7 @@ def run(SAVE=False):
 
 
         # annotate
-        ax.annotate(f'WSP=${wsp}m/s$' , xy=(0.5, 0.96), xycoords='axes fraction',
+        ax.annotate(f'$U={wsp}m/s$' , xy=(0.5, 0.96), xycoords='axes fraction',
                     size=10, ha='center', va='top',
                     bbox=dict(boxstyle='round', fc='w', alpha=0.0))
     # axis

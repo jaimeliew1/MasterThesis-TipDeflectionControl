@@ -88,7 +88,7 @@ def _run(dlc, dlc2, dlc_noipc, C, C2, SAVE=False):
         ax.set_xticklabels(WSP)
         ax.grid(True, axis='y')
         ax.set_axisbelow(True)
-        ax.bar(WSP, Req_ol, width, label = 'No control', hatch='\\\\', fc='0.8', ec='0')
+        ax.bar(WSP, Req_ol, width, label = 'No IPC', hatch='\\\\', fc='0.8', ec='0')
         ax.bar(WSP + width, Req, width, label='Tip Deflection Sensors', ec='0')
         ax.bar(WSP + 2*width, Req2, width, label='Strain Gauge Sensors', ec='0')
         ax.annotate(title , xy=(0.5, 0.97), xycoords='axes fraction',
