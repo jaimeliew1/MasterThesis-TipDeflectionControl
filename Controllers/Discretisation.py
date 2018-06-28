@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from JaimesThesisModule.ControlDesign import MatchedZeroPole, saveHTC
 
-from IPC_PI import make
+from Controllers.IPC_PI import make
 Fs = 100
 SAVE = True
 filename = 'ipc_pi.htc'

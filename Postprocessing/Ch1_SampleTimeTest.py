@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from Controllers.Discretisation import discretise
 
-from IPC04 import make
+from Controllers.IPC04 import make
 
 SAVE = True
 
