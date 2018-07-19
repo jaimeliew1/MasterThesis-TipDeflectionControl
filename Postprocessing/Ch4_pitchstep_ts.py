@@ -64,7 +64,7 @@ def run(SAVE=False):
     fig.text(0.04, 0.8, 'IPC Pitch \n Demand [$^o$]', va='center', rotation='vertical')
     fig.text(0.5, 0.05, 'Time [s]', ha='center', rotation='horizontal')
     for i, wsp in enumerate(wsp_):
-        ax[i+1].set_ylabel(f'$U={wsp}$')
+        ax[i+1].set_ylabel(f'$U={wsp}$ $m/s$')
         ax[i+1].yaxis.set_label_position('right')
 
     # over top legend
