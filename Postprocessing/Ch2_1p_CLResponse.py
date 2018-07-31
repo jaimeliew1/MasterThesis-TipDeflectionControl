@@ -82,9 +82,9 @@ def run(dlc, dlc_noipc, SAVE=False):
 
 
 
-        ax.plot(f, Yol(f), label='$Y_{OL}$')
-        ax.plot(f, Ycl_pred, '--k', label ='$Y_{CL}$ (linear)')
-        ax.plot(f, Ycl(f), 'r', label ='$Y_{CL}$ (HAWC2)')
+        ax.plot(f, Yol(f), label='OL')
+        ax.plot(f, Ycl_pred, '--k', label ='CL (linear)')
+        ax.plot(f, Ycl(f), 'r', label ='CL (HAWC2)')
 
         # axis
         ax.set_xscale('log')

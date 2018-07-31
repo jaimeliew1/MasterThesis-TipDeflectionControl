@@ -24,7 +24,7 @@ def wsp_probs(Class=1, dx=2, Range= [4, 26.1]):
         A = 8.5/math.gamma(1+1/k)
     elif Class == 3:
         A = 7.5/math.gamma(1+1/k)
-
+    print(A)
     # Weibull cdf function
     cdf = lambda x: 1 - np.exp(-(x/A)**k)
     #Discrete wind speeds

@@ -91,15 +91,16 @@ def run(dlcs, wsp = 20, SAVE=None):
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
 
 
-    data = [[azim1, td1],
+    data = [#[azim1, td1],
             [azim2, td2],
-            [azim3, td3],
+           # [azim3, td3],
             [azim4, td4],]
-    labels = ['$C_{f1p}$ Normal shear',
+    labels = [#'$C_{f1p}$ Normal shear',
               '$C_{2}$ ~~~Normal shear',
-              '$C_{f1p}$ Inverse shear',
+              #'$C_{f1p}$ Inverse shear',
               '$C_{2}$ ~~~Inverse shear',]
-    styles = ['--', '--', '-', '-']
+    #styles = ['--', '--', '-', '-']
+    styles = ['-', '-']
     colors = ['tab:blue', 'tab:orange', 'tab:blue', 'tab:orange',]
     amps = [0, 1, 2, 3, 4]
     plt.figure(figsize=[5, 3])
@@ -118,6 +119,7 @@ def run(dlcs, wsp = 20, SAVE=None):
     plt.xticks(amps)
     plt.xlabel('Tip Tracking Amplitude, $A_r$ [m]')
     plt.ylabel('Standard Deviation of Tracking Error [m]')
+    plt.ylim(0.6, 1.3)
 
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
