@@ -115,8 +115,8 @@ def run(dlc, dlc_noipc, SAVE=None):
     ax[2,0].set_xticks([0, 120, 240, 360])
     ax[2,1].set_xticks([120, 240, 360])
     #ax[0,0].axvline(x=45, c='w', ls='--', lw=1)
-    ax[0, 0].set_title('Without IPC')
-    ax[0, 1].set_title('With IPC')
+    ax[0, 0].set_title('CPC')
+    ax[0, 1].set_title('CPC and IPC')
 
     ax[2, 1].legend()
     if SAVE:

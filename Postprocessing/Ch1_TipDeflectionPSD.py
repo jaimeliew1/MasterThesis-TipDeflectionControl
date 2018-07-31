@@ -40,7 +40,7 @@ def run(dlc_noipc, SAVE=False):
     axes.grid(which='minor', axis='x')
     axes.grid(axis='y')
     for wsp in WSP:
-        axes.plot(f, Yave[wsp], label = f'$U={wsp}$')
+        axes.plot(f, Yave[wsp], label = f'$U={wsp}m/s$')
 
     plt.legend()
     if SAVE:
