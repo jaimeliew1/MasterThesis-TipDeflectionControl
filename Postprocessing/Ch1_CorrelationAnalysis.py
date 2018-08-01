@@ -60,7 +60,7 @@ def run(dlc_noipc, SAVE=None):
         # text
         string = '$R^2= {:2.2f}$\n$Slope = {:2.2E} m/Nm$'.format(corr**2,
                         coeffs[0]/1000)
-        string = string.replace('E-0', '\\times 10^{')
+        string = string.replace('E-0', '\\times 10^{-')
         string = string.replace(' m', '} m')
         ax.text(0.35, 0.9, f'$WSP={wsp}m/s$', transform=ax.transAxes)
         ax.text(0.2, 0.03, string, transform=ax.transAxes, color='k')
