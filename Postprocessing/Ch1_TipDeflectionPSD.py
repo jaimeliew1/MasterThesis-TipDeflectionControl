@@ -28,7 +28,7 @@ def run(dlc_noipc, SAVE=False):
 
     fig, axes = plt.subplots()
 
-    axes.set_ylabel('Power Spectran Density [$m^2$/$Hz$]')
+    axes.set_ylabel('Power Spectral Density [$m^2$/$Hz$]')
     axes.set_xlabel('Frequency [$Hz$]')
     axes.set_xlim([0.01, 1.5])
     axes.set_xscale('log')
