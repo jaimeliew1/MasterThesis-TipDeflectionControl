@@ -24,14 +24,14 @@ def wsp_probs(Class=1, dx=2, Range= [4, 26.1]):
         A = 8.5/math.gamma(1+1/k)
     elif Class == 3:
         A = 7.5/math.gamma(1+1/k)
-    print(A)
+    #print(A)
     # Weibull cdf function
     cdf = lambda x: 1 - np.exp(-(x/A)**k)
     #Discrete wind speeds
     Y = np.arange(Range[0], Range[1], dx)
 
     # Probabilities of each wind speed
-    P = [(cdf(y+dx/2) - cdf(y-dx/2))/dx for y in Y]
+    P = [(cdf(y+dx/2) - cdf(y-dx/2)) for y in Y]
 
     return dict(zip(Y, P))
 

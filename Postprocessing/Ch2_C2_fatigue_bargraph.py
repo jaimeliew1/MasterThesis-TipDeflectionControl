@@ -11,10 +11,12 @@ from JaimesThesisModule import PostProc
 def run(dlc, dlc_noipc, SAVE=False):
 
     C = ['ipcpi', 'ipc04', 'ipc07']
+    #C = ['ipc07']
     keys = ['RBMf', 'MBt', 'MBy']
     titles = ['Blade (flapwise)',
               'Main bearing (tilt)', 'Main bearing (yaw)']
     labels = ['$C_{PI}$', '$C_{f1p}$', '$C_{2}$']
+    #labels = ['IPC']
     #WSP = np.array([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26])
     WSP = np.arange(4, 27, 4)
     fig, axes = plt.subplots(1, 3, sharex=True, sharey=True, figsize=[10,3])
@@ -35,7 +37,7 @@ def run(dlc, dlc_noipc, SAVE=False):
         width = 3/(len(C) + 1)
         #http://colorbrewer2.org/#type=sequential&scheme=YlGnBu&n=4
         colors = ['#edf8b1','#7fcdbb','#2c7fb8']
-
+        #colors = ['#2c7fb8']
         ax.set_xticks(WSP + 1)
         ax.set_xticklabels(WSP)
         ax.grid(True, axis='y')
