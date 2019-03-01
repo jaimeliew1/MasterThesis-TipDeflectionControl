@@ -44,14 +44,15 @@ for i in [0, 1, 2]:
     ax[i].set_yticks([])
     ax2.set_yticks([])
 
-
+    ax[i].set_ylabel('Tip Deflection [m]')
     ax2.set_ylabel(f'Blade {i+1}')
-    fig.text(0.5, 0.06, 'Rotor azimuth angle, $\psi$ [deg]', ha='center', rotation='horizontal')
+    
 
     if i==0:
         lns = ln1+ln2
         labs = [l.get_label() for l in lns]
         ax[i].legend(lns, labs, loc=0)
+fig.text(0.5, 0.06, 'Rotor azimuth angle, $\psi$ [deg]', ha='center', rotation='horizontal')
 
 # annotations
 ax[2].annotate(s='', xy=a, xytext=b, xycoords = 'data',
