@@ -55,7 +55,7 @@ def run(SAVE=False):
     ax[0].plot(T[4], X[4], 'tab:orange')
     for i, wsp in enumerate(wsp_):
         ax[i+1].plot(T[wsp], Y[wsp], label='Step response')
-        ax[i+1].plot(T[wsp] + 40, Y[wsp]/2, ':k', label='Projected step response')
+        # ax[i+1].plot(T[wsp] + 40, Y[wsp]/2, ':k', label='Projected step response')
         ax[i+1].set_ylim(-1.4, 0.6)
 
 
@@ -68,7 +68,7 @@ def run(SAVE=False):
         ax[i+1].yaxis.set_label_position('right')
 
     # over top legend
-    ax[-1].legend(ncol=2,loc='lower right')
+    # ax[-1].legend(ncol=2,loc='lower right')
 # manual adjustments
     ax[0].set_ylim(-0.1, 1.5)
     if SAVE:
@@ -77,4 +77,4 @@ def run(SAVE=False):
 
 
 if __name__ is '__main__':
-    run()
+    run(SAVE='../Figures/Ch4_pitchstep_ts.png')

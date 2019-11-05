@@ -90,7 +90,7 @@ def run(dlcs, SAVE=None):
 
 
 
-def _run(dlc_noipc, dlc1, dlc2, wsp=18, SAVE=None):
+def _run(dlc_noipc, dlc1, dlc2, wsp=12, SAVE=None):
     labels = ['no\nIPC', '$0m$', '$1m$', '$2m$', '$3m$', '$4m$']
 
     pr_noipc = get_pa_data_from_sim(dlc_noipc(wsp=wsp)[0])
@@ -161,7 +161,7 @@ if __name__ is '__main__':
     'dlc15_2':PostProc.DLC('dlc15_2')}
 
 
-    run(dlcs, SAVE=False)
+    run(dlcs, SAVE='../Figures/Ch3_pitchangle_kde.png')
 
 
 

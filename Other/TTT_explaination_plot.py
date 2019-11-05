@@ -64,10 +64,10 @@ ax[2].annotate(s='', xy=b, xytext=c, xycoords = 'data',
 ax[2].annotate(s='', xy=c, xytext=d, xycoords = 'data',
   textcoords = 'data',arrowprops=dict(arrowstyle='<->', shrinkB=0, shrinkA=0))
 
-ax[2].text(a[0] - 5, pitchAmp/2 - 0.1, '$\\frac{A_r}{a}$', horizontalalignment='right',
+ax[2].text(a[0] - 5, pitchAmp/2 - 0.1, '$\\frac{A_r}{\\alpha}$', horizontalalignment='right',
   verticalalignment='center', fontsize=15)
 
-ax[2].text(a[0] + offset/2, 0, '$b$', horizontalalignment='center',
+ax[2].text(a[0] + offset/2, -0.1, '$\\beta$', horizontalalignment='center',
   verticalalignment='top', fontsize=14)
 
 ax[2].text(d[0] + 2, 1/2 - 0.1, '$A_r$', horizontalalignment='left',

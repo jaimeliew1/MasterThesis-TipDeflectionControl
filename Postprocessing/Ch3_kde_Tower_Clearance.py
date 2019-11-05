@@ -123,9 +123,4 @@ if __name__ is '__main__':
     'dlc15_1':PostProc.DLC('dlc15_1'),
     'dlc15_2':PostProc.DLC('dlc15_2')}
 
-    run(dlcs, SAVE=False)
-
-
-
-
-
+    run(dlcs, SAVE='../Figures/Ch3_kde_Tower_Clearance.png')

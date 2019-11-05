@@ -288,7 +288,7 @@ class DLC(object):
 
         if not os.path.isfile(filename):
             raise FileNotFoundError('Parameter file {} does not exist.'.format(filename))
-        self.seedParams = pd.DataFrame.from_csv(filename, index_col=None)
+        self.seedParams = pd.read_csv(filename, index_col=None)
 
 
         self.basename = basename
@@ -413,4 +413,3 @@ class DLC(object):
 
 if __name__ is '__main__':
     dlc = DLC('dlc15_2')
-
