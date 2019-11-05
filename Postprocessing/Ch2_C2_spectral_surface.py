@@ -43,15 +43,15 @@ def run(dlc, dlc_noipc, SAVE=False):
     Z = np.array(Z).T
 
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=[8, 6])
     ax.autoscale( tight=True)
     ax.set_ylabel('Frequency [Hz]'); ax.set_xlabel('Wind Speed [m/s]')
     Analysis.SpectralContour3(X, Y, Z, ax)
     Analysis.plotRotorFreq(4, ax)
 
-    ax.annotate('$C_2$ Control' , xy=(0.96, 0.96), xycoords='axes fraction',
-                size=10, ha='right', va='top',
-                bbox=dict(boxstyle='round', fc='w', alpha=0.7))
+    #ax.annotate('$C_2$ Control' , xy=(0.96, 0.96), xycoords='axes fraction',
+    #             size=10, ha='right', va='top',
+    #            bbox=dict(boxstyle='round', fc='w', alpha=0.7))
 
     if SAVE:
         plt.savefig(SAVE, dpi=200, bbox_inches='tight')
@@ -64,7 +64,7 @@ if __name__ is '__main__':
     dlc_noipc = PostProc.DLC('dlc11_0')
     dlc = PostProc.DLC('dlc11_1')
 
-    run(dlc, dlc_noipc, SAVE=False)
+    run(dlc, dlc_noipc, SAVE='../Figures/Ch2_C2_spectral_surface.png')
 
 
 

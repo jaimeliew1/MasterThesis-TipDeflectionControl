@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 from JaimesThesisModule import ControlDesign, PostProc
+from Modelling import BladeModel
 
 #from Controllers import ControllerEvaluation
 
@@ -37,15 +38,3 @@ if __name__ == '__main__':
         # performance at f1p to f4p
         for i, perf in enumerate(sys.performance(f1p)):
             print('f{}p: {:+.2f}%'.format(i+1, perf*100))
-
-
-
-
-
-
-
-
-
-
-
-
