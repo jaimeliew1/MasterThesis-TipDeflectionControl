@@ -3,8 +3,8 @@ Master Thesis - Active Tip Deflection Control For Wind Turbines
 
  
 
-This repository contains the Python3 code used in my Master Thesis titled *Active
-Tip Deflection Control For Wind Turbines*. The main external packages required
+This repository contains the Python3 code used in my Master Thesis titled [*Active
+Tip Deflection Control For Wind Turbines*](https://pdfs.semanticscholar.org/8b67/ea1d7c62821554c0b0b820ed3fe7c762ab0d.pdf). The main external packages required
 are Numpy, Scipy and Matplotlib. Anaconda or Miniconda installations of Python3
 should suffice.
 
